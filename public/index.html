@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IdeaForge-X: check your project idea before you build it</title>
+<style>
+:root{--ink:#14213d;--mu:#5b6b82;--paper:#eef2f7;--panel:#fff;--line:#d5dde8;--blue:#2457ff;--blue-soft:#e6ecff;--build:#0f8a5f;--build-bg:#e3f5ec;--change:#9a6200;--change-bg:#fdf0d5;--drop:#b83232;--drop-bg:#fbe6e6;--r:10px}
+@media (prefers-color-scheme:dark){:root{--ink:#e8edf6;--mu:#9aa9bf;--paper:#0f1623;--panel:#172033;--line:#2b3850;--blue:#7b9bff;--blue-soft:#1f2c4d;--build:#4cc38a;--build-bg:#12301f;--change:#f0b53c;--change-bg:#3a2d10;--drop:#ef7b7b;--drop-bg:#3b1a1a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+header{padding:20px 24px 4px;max-width:1120px;margin:0 auto}
+.brand{font:700 26px/1.2 Georgia,"Times New Roman",serif;margin:0}
+.brand b{color:var(--blue)}
+.tag{margin:2px 0 0;color:var(--mu)}
+.app{max-width:1120px;margin:0 auto;padding:16px 24px 56px;display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start}
+@media (max-width:860px){.app{grid-template-columns:1fr;padding:12px 14px 40px}header{padding:16px 14px 0}}
+aside{position:sticky;top:12px;display:grid;gap:16px}
+@media (max-width:860px){aside{position:static}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+h2{font-size:17px;margin:0 0 10px}
+h3{font-size:15px;margin:20px 0 8px}
+label{display:block;font-weight:600;font-size:14px;margin:12px 0 5px}
+textarea,select,input[type=text]{width:100%;font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px}
+textarea{min-height:120px;resize:vertical}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.hint{font-size:13px;color:var(--mu);margin:6px 0 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{font:inherit;font-size:13px;background:var(--blue-soft);color:var(--blue);border:0;border-radius:20px;padding:4px 11px;cursor:pointer}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{font:inherit;font-weight:600;background:var(--blue);color:#fff;border:0;border-radius:8px;padding:11px 16px;cursor:pointer;width:100%;margin-top:16px}
+.btn:disabled{opacity:.6;cursor:progress}
+.btn2{font:inherit;font-size:14px;font-weight:600;background:var(--panel);color:var(--blue);border:1px solid var(--blue);border-radius:8px;padding:7px 12px;cursor:pointer}
+.hist{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.hist button{width:100%;text-align:left;font:inherit;font-size:14px;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 10px;cursor:pointer;display:flex;gap:8px;align-items:center}
+.hist .t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dot{width:10px;height:10px;border-radius:50%;flex:none}
+.d-build{background:var(--build)}.d-change{background:var(--change)}.d-drop{background:var(--drop)}
+.empty{color:var(--mu);font-size:14px;margin:0}
+.link{background:none;border:0;color:var(--mu);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer;padding:0;margin-top:10px}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.steps li{display:flex;gap:10px;align-items:center;color:var(--mu)}
+.steps .s{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);flex:none}
+.steps .on{color:var(--ink);font-weight:600}.steps .on .s{border-color:var(--blue);border-top-color:transparent;animation:spin .8s linear infinite}
+.steps .done .s{background:var(--build);border-color:var(--build)}.steps .done{color:var(--ink)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.steps .on .s{animation:none}}
+.verdict{border-radius:var(--r);padding:20px}
+.v-build{background:var(--build-bg);color:var(--build)}.v-change{background:var(--change-bg);color:var(--change)}.v-drop{background:var(--drop-bg);color:var(--drop)}
+.verdict h2{font:700 30px/1.15 Georgia,"Times New Roman",serif;margin:0 0 6px}
+.verdict p{margin:0;color:var(--ink)}
+.chg{display:inline-block;margin-top:10px;font-size:14px;font-weight:600;background:var(--panel);color:var(--ink);border-radius:20px;padding:3px 12px}
+.scores{display:grid;gap:12px;margin-top:4px}
+.sc{display:grid;grid-template-columns:140px 1fr 90px;gap:10px;align-items:center;font-size:15px}
+@media (max-width:520px){.sc{grid-template-columns:1fr 1fr}.sc .bar{grid-column:1/3;order:3}}
+.bar{height:8px;background:var(--paper);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;background:var(--blue)}
+.sc span:last-child{text-align:right;color:var(--mu)}
+.pill{display:inline-block;font-size:13px;font-weight:600;background:var(--blue-soft);color:var(--blue);border-radius:20px;padding:2px 10px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:10px}
+.tab{font:inherit;font-size:14px;background:none;border:0;border-bottom:3px solid transparent;padding:8px 10px;color:var(--mu);cursor:pointer}
+.tab[aria-selected="true"]{color:var(--ink);border-color:var(--blue);font-weight:600}
+.ev{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.ev a{color:var(--blue);font-weight:600;text-decoration:none}.ev a:hover{text-decoration:underline}
+.ev small{display:block;color:var(--mu)}
+.mut{border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:10px}
+.mut b{display:block;margin-bottom:2px}.mut p{margin:0 0 8px;font-size:15px}
+.mut .m{font-size:13px;color:var(--mu);margin-right:10px}
+ul.plain{margin:0;padding-left:20px}ul.plain li{margin-bottom:5px}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.note{font-size:13px;color:var(--mu);margin-top:14px}
+.err{border-left:4px solid var(--drop);background:var(--drop-bg);color:var(--ink);padding:12px 14px;border-radius:8px}
+.res>*+*{margin-top:16px}
+.how{display:grid;gap:12px;margin:0;padding:0;list-style:none}
+.how b{display:block}
+@media print{aside,header .tag,.acts,.btn2,.tabs{display:none}.app{display:block}.panel{border:0;padding:0}body{background:#fff;color:#000}}
+
+html{scroll-behavior:smooth}@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+section[id],div[id=checker]{scroll-margin-top:16px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+@media (max-width:860px){.wrap{padding:0 14px}}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:16px 0}
+.nav ul{display:flex;gap:18px;list-style:none;margin:0;padding:0;flex-wrap:wrap}
+.nav a{color:var(--mu);text-decoration:none;font-size:15px}.nav a:hover{color:var(--ink)}
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:36px;align-items:center;padding:36px 0 44px}
+@media (max-width:860px){.hero{grid-template-columns:1fr;padding:20px 0 28px}}
+.hero h1{font:700 clamp(32px,5vw,50px)/1.1 Georgia,"Times New Roman",serif;margin:0 0 14px;letter-spacing:-.01em}
+.hero p.lead{font-size:18px;color:var(--mu);margin:0 0 22px;max-width:52ch}
+.cta{display:inline-block;background:var(--blue);color:#fff;text-decoration:none;font-weight:600;border-radius:8px;padding:12px 20px}
+.cta.alt{background:transparent;color:var(--blue);border:1px solid var(--blue);margin-left:8px}
+.slip{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:0 1px 0 var(--line)}
+.slip .top{padding:16px 18px}
+.slip .top small{display:block;color:var(--mu);margin-bottom:2px}
+.slip .top h3{font:700 26px/1.15 Georgia,serif;margin:0 0 4px}
+.slip .body{padding:14px 18px 18px;display:grid;gap:9px;font-size:14px}
+.slip .sc{grid-template-columns:110px 1fr 40px}
+.slip .fix{border-top:1px solid var(--line);padding:12px 18px;font-size:14px;background:var(--paper)}
+.band{border-top:1px solid var(--line);padding:48px 0}
+.band h2{font:700 28px/1.2 Georgia,serif;margin:0 0 8px}
+.band .sub{color:var(--mu);margin:0 0 24px;max-width:62ch}
+.story{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);overflow:hidden}
+@media (max-width:860px){.story{grid-template-columns:1fr}}
+.story div{padding:18px;border-right:1px solid var(--line)}.story div:last-child{border:0}
+@media (max-width:860px){.story div{border-right:0;border-bottom:1px solid var(--line)}}
+.story b{display:block;font-family:Georgia,serif;font-size:19px;margin-bottom:4px}
+.story .bad{background:var(--drop-bg)}
+.steps4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;counter-reset:s;list-style:none;margin:0;padding:0}
+@media (max-width:860px){.steps4{grid-template-columns:1fr 1fr}}@media (max-width:520px){.steps4{grid-template-columns:1fr}}
+.steps4 li{counter-increment:s;border-top:3px solid var(--blue);padding-top:10px}
+.steps4 li:before{content:counter(s);font:700 24px Georgia,serif;color:var(--blue);display:block}
+.steps4 b{display:block;margin:2px 0}.steps4 span{color:var(--mu);font-size:15px}
+dl.get{margin:0;display:grid;grid-template-columns:200px 1fr;gap:0}
+@media (max-width:640px){dl.get{grid-template-columns:1fr}}
+dl.get dt{font-weight:700;padding:12px 12px 0 0;border-top:1px solid var(--line)}
+dl.get dd{margin:0;padding:12px 0;border-top:1px solid var(--line);color:var(--mu)}
+@media (max-width:640px){dl.get dt{padding-bottom:0}dl.get dd{border-top:0;padding-top:2px}}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--panel)}
+.tbl table{border-collapse:collapse;width:100%;min-width:560px;font-size:15px}
+.tbl th,.tbl td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl tr:last-child td{border-bottom:0}.tbl th{background:var(--paper)}
+.tbl td:last-child{background:var(--blue-soft)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media (max-width:860px){.two{grid-template-columns:1fr}}
+.soon{display:inline-block;font-size:13px;font-weight:600;background:var(--change-bg);color:var(--change);border-radius:20px;padding:2px 10px;margin-bottom:10px}
+.college ul{margin:0;padding-left:20px}.college li{margin-bottom:8px}
+details.q{border-top:1px solid var(--line);padding:12px 0}
+details.q:last-of-type{border-bottom:1px solid var(--line)}
+details.q summary{cursor:pointer;font-weight:600;font-size:17px}
+details.q p{margin:8px 0 0;color:var(--mu);max-width:70ch}
+.final{text-align:center;padding:48px 0}
+.final h2{font:700 28px/1.2 Georgia,serif;margin:0 0 14px}
+footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--mu);font-size:14px}
+.sec-h{padding:40px 0 4px}.sec-h h2{font:700 28px/1.2 Georgia,serif;margin:0 0 6px}.sec-h p{margin:0;color:var(--mu)}
+.app{padding-top:16px}
+.big{font:700 26px/1.2 Georgia,serif;margin:0 0 6px}.ok{color:var(--build);font-weight:600}.warn{color:var(--change);font-weight:600}.free{font-size:12px;font-weight:600;border-radius:20px;padding:1px 8px;background:var(--build-bg);color:var(--build)}.paid{font-size:12px;font-weight:600;border-radius:20px;padding:1px 8px;background:var(--change-bg);color:var(--change)}.costline{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:8px 0}.costline small{display:block;color:var(--mu)}.costline:last-child{border-bottom:0}.tbl td,.tbl th{font-size:14px}#homeView[hidden],#resultView[hidden]{display:none}
+.app{grid-template-columns:1fr}
+.app aside{position:static;grid-template-columns:1.5fr 1fr;align-items:start}
+@media (max-width:860px){.app aside{grid-template-columns:1fr}}
+.rwrap{max-width:900px}
+.rbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:16px 0}
+.rbar .brand{font-size:22px}
+.recap small{color:var(--mu)}.recap p{margin:2px 0 0}
+.errtxt{color:var(--drop);font-size:14px;margin:8px 0 0}
+@media print{.rbar{display:none}}
+
+.band-hero{background:#0f1b3d;color:#fff;padding-bottom:64px}
+.band-hero .nav a{color:#c3d0ea}.band-hero .nav a:hover{color:#fff}
+.band-hero .brand{color:#fff}.band-hero .brand b{color:#8fb0ff}
+.hero2{display:grid;grid-template-columns:1fr 450px;gap:44px;align-items:start;padding:28px 0 0}
+@media (max-width:940px){.hero2{grid-template-columns:1fr;gap:28px}}
+.pitch h1{font:700 clamp(36px,5.4vw,58px)/1.06 Georgia,"Times New Roman",serif;margin:12px 0 16px;letter-spacing:-.015em}
+.lead2{font-size:19px;color:#c3d0ea;margin:0 0 22px;max-width:30em}
+.ticks{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.ticks li{padding-left:28px;position:relative;color:#e6ecf8}
+.ticks li:before{content:"";position:absolute;left:0;top:6px;width:16px;height:16px;border-radius:50%;background:#2fbf86;box-shadow:inset 0 0 0 4px #0f1b3d,0 0 0 2px #2fbf86}
+.formcard{color:var(--ink);box-shadow:0 18px 40px rgba(0,0,0,.3);padding:20px}
+.formcard h2{font:700 22px/1.2 Georgia,serif;margin:0 0 4px}
+.formcard textarea{min-height:96px}
+details.more,details.past{margin-top:12px;font-size:14px}
+details.more summary,details.past summary{cursor:pointer;color:var(--blue);font-weight:600}
+.sec{padding:56px 24px;border-top:0}
+@media (max-width:860px){.sec{padding:40px 14px}}
+.sec h2{font:700 30px/1.2 Georgia,serif;margin:0 0 10px}
+.sec .sub{color:var(--mu);max-width:60ch;margin:0 0 22px}
+.sec a{color:var(--blue)}
+.steps3{list-style:none;margin:20px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;counter-reset:n}
+@media (max-width:760px){.steps3{grid-template-columns:1fr}}
+.steps3 li{counter-increment:n;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px 18px 18px 64px;position:relative}
+.steps3 li:before{content:counter(n);position:absolute;left:16px;top:16px;width:34px;height:34px;border-radius:50%;background:var(--blue);color:#fff;font:700 18px/34px Georgia,serif;text-align:center}
+.steps3 b{display:block;font-size:18px;margin-bottom:4px}.steps3 span{color:var(--mu)}
+.get2{display:grid;grid-template-columns:420px 1fr;gap:40px;align-items:center}
+@media (max-width:860px){.get2{grid-template-columns:1fr;gap:24px}}
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.checks li{padding-left:30px;position:relative}
+.checks li:before{content:"";position:absolute;left:0;top:5px;width:18px;height:18px;border-radius:50%;background:var(--build)}
+.checks li:after{content:"";position:absolute;left:6px;top:8px;width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.box.mine{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue)}
+.sec .two{margin-top:6px}
+.sec details.q{max-width:760px}
+</style>
+</head>
+<body>
+<div id="homeView">
+<div class="band-hero">
+ <div class="wrap">
+  <nav class="nav" aria-label="Main">
+    <span class="brand">Idea<b>Forge</b>-X</span>
+    <ul>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#get">What you get</a></li>
+      <li><a href="#diff">Why it is different</a></li>
+      <li><a href="#faq">Questions</a></li>
+    </ul>
+  </nav>
+  <div class="hero2">
+    <div class="pitch">
+      <h1>Is your project idea really new?</h1>
+      <p class="lead2">Find out in one minute, before you spend four months building something that already exists.</p>
+      <ul class="ticks">
+        <li>Looks through real research papers and GitHub projects</li>
+        <li>Tells you: build it, change it, or drop it</li>
+        <li>Shows easy ways to make your idea more unique</li>
+      </ul>
+    </div>
+    <section class="panel formcard" id="checker" aria-labelledby="h-form">
+      <h2 id="h-form">Check your idea</h2>
+      <label for="idea">What do you want to build?</label>
+      <textarea id="idea" placeholder="Example: A web app that marks classroom attendance using face recognition"></textarea>
+      <div class="chips" id="chips" aria-label="Example ideas"></div>
+      <label for="tech">Technologies you plan to use (optional)</label>
+      <input id="tech" type="text" placeholder="e.g. React, Python, Firebase">
+      <details class="more">
+        <summary>More options: level, time, budget</summary>
+        <div class="row2">
+          <div><label for="level">Your level</label>
+            <select id="level"><option>final-year B.Tech</option><option>mini project</option><option>master's</option><option>hackathon</option></select></div>
+          <div><label for="time">Time you have</label>
+            <select id="time"><option>2 months</option><option selected>4 months</option><option>6+ months</option><option>2 days</option></select></div>
+        </div>
+        <div class="row2">
+          <div><label for="budget">Your budget (optional)</label><input id="budget" type="text" inputmode="numeric" placeholder="e.g. 5000"></div>
+          <div><label for="cur">Currency</label><select id="cur"><option value="INR">Rupees (₹)</option><option value="USD">Dollars ($)</option><option value="GBP">Pounds (£)</option></select></div>
+        </div>
+      </details>
+      <button class="btn" id="go">Check my idea</button>
+      <p class="errtxt" id="formErr" role="alert" hidden></p>
+      <details class="past">
+        <summary>Past checks</summary>
+        <ul class="hist" id="hist"></ul>
+        <p class="empty" id="histEmpty">Your checked ideas will appear here.</p>
+        <button class="link" id="clear" hidden>Clear past checks</button>
+      </details>
+    </section>
+  </div>
+ </div>
+</div>
+
+<div class="wrap sec" id="how">
+  <h2>How it works</h2>
+  <ol class="steps3">
+    <li><b>Write your idea</b><span>Say what you want to build in one or two sentences.</span></li>
+    <li><b>We search</b><span>We look for the same idea in research papers and on GitHub.</span></li>
+    <li><b>You get an answer</b><span>Build it, change it, or drop it. You also get better ideas, tools and a cost.</span></li>
+  </ol>
+</div>
+
+<div class="wrap sec" id="get">
+  <div class="get2">
+    <div class="slip" aria-label="Example result">
+      <div class="top v-drop"><small>Example: "AI attendance system"</small><h3>Don't build this</h3><span>Many projects like this already exist.</span></div>
+      <div class="body">
+        <div class="sc"><span>Originality</span><span class="bar"><i style="width:10%"></i></span><span>10%</span></div>
+        <div class="sc"><span>Future scope</span><span class="bar"><i style="width:30%"></i></span><span>30%</span></div>
+        <div class="sc"><span>Difficulty</span><span><span class="pill">Easy</span></span><span></span></div>
+      </div>
+      <div class="fix"><b>Try instead:</b> Detect fake photos (anti-spoofing) on cheap webcams.</div>
+    </div>
+    <div>
+      <h2>What you get</h2>
+      <ul class="checks">
+        <li>A clear answer: build it, change it first, or don't build it</li>
+        <li>Scores for how new, useful and hard your idea is</li>
+        <li>A table of projects that already exist, and what yours is missing</li>
+        <li>A table that shows how to make your idea unique</li>
+        <li>Tools to use, and what the project may cost</li>
+        <li>Links to every paper and project we found</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="wrap sec" id="diff">
+  <h2>Is this tool new? Not completely.</h2>
+  <p class="sub">Other tools already check if an idea is new, like <a href="https://lablab.ai/submissions/pwj7y11kdomqhcrw7n4fgvms" target="_blank" rel="noopener">PatentVault AI</a> and the <a href="https://aclanthology.org/2025.sdp-1.9" target="_blank" rel="noopener">Idea Novelty Checker</a> research paper. They are made for inventors and researchers.</p>
+  <div class="two">
+    <div class="box"><h3 style="margin-top:0">What those tools do</h3><ul class="plain"><li>Check papers or patents</li><li>Give a novelty score</li><li>Leave the next step to you</li></ul></div>
+    <div class="box mine"><h3 style="margin-top:0">What IdeaForge-X adds</h3><ul class="plain"><li>Made for student projects</li><li>Checks GitHub projects too</li><li>Gives a clear decision</li><li>Gives 3 better versions you can check again</li><li>Suggests tools and a cost with live prices</li></ul></div>
+  </div>
+  <p class="note">A chatbot guesses from memory. IdeaForge-X searches and shows you the links. This comparison uses what each tool says about itself. We did not test them.</p>
+</div>
+
+<div class="wrap sec" id="faq">
+  <h2>Questions</h2>
+  <details class="q"><summary>Is the score exact?</summary><p>No. It is an estimate. Use it to compare ideas, and open the links yourself to check.</p></details>
+  <details class="q"><summary>Where does my idea go?</summary><p>Your idea is sent to Google's Gemini AI and to paper and GitHub search. Your past checks stay only in your browser.</p></details>
+  <details class="q"><summary>Is it free?</summary><p>There is no sign-up. It uses your own free Gemini key, so the limits come from Google.</p></details>
+  <details class="q"><summary>Can it replace my project guide?</summary><p>No. It helps you talk to your guide with proof. Your guide decides what is allowed.</p></details>
+</div>
+</div>
+<div id="resultView" hidden>
+  <div class="wrap rwrap">
+    <div class="rbar"><span class="brand">Idea<b>Forge</b>-X</span><span><button type="button" class="btn2" id="back">Back to home</button> <button type="button" class="btn2" id="again">Check another idea</button></span></div>
+    <main id="main" aria-live="polite"></main>
+  </div>
+</div>
+<footer><div class="wrap">IdeaForge-X is a student project tool. Results are estimates. They do not replace your guide's advice. A college version is planned for later. Built with Node.js, Express, the Gemini API, Semantic Scholar, arXiv and GitHub search.</div></footer>
+
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var STEPS=["Reading your idea","Searching research papers","Searching GitHub projects","Writing your verdict","Checking current prices"];
+var EXAMPLES=["AI attendance system","Online exam proctoring tool","Crop disease detection app","Campus lost and found app"];
+var V={"BUILD":{c:"v-build",d:"d-build",t:"Build it"},"CHANGE IT":{c:"v-change",d:"d-change",t:"Change it first"},"DON'T BUILD":{c:"v-drop",d:"d-drop",t:"Don't build this"}};
+var main=$("main"),btn=$("go"),timers=[],current=null,prevOrig=null;
+var home=$("homeView"),resv=$("resultView");
+function setView(v){home.hidden=v!=="home";resv.hidden=v!=="result";window.scrollTo(0,0)}
+function view(v){var cur=resv.hidden?"home":"result";if(cur!==v)history.pushState({v:v},"");setView(v)}
+history.replaceState({v:"home"},"");
+window.addEventListener("popstate",function(e){setView(e.state&&e.state.v==="result"?"result":"home")});
+$("back").onclick=function(){view("home")};
+$("again").onclick=function(){view("home");var c=$("checker");if(c)c.scrollIntoView();$("idea").focus()};
+
+function esc(s){var d=document.createElement("div");d.textContent=s==null?"":String(s);return d.innerHTML}
+function n(v){v=Number(v);return isNaN(v)?0:Math.max(0,Math.min(100,Math.round(v)))}
+function lvl(v){return v>=70?"High":v>=40?"Medium":"Low"}
+function load(){try{return JSON.parse(localStorage.getItem("ifx_hist")||"[]")}catch(e){return[]}}
+function store(a){try{localStorage.setItem("ifx_hist",JSON.stringify(a.slice(0,15)))}catch(e){}}
+
+/* examples */
+$("chips").innerHTML=EXAMPLES.map(function(x){return '<button type="button" class="chip">'+esc(x)+'</button>'}).join("");
+$("chips").onclick=function(e){if(e.target.className==="chip"){$("idea").value=e.target.textContent;$("idea").focus()}};
+
+/* history */
+function drawHist(){
+  var h=load(),ul=$("hist");
+  $("histEmpty").hidden=h.length>0;$("clear").hidden=h.length===0;
+  ul.innerHTML=h.map(function(x,i){var v=V[x.r.verdict]||V["CHANGE IT"];return '<li><button type="button" data-i="'+i+'"><span class="dot '+v.d+'"></span><span class="t">'+esc(x.idea)+'</span><b>'+n(x.r.originality)+'%</b></button></li>'}).join("");
+}
+$("hist").onclick=function(e){var b=e.target.closest("button");if(!b)return;var x=load()[b.dataset.i];if(x){current=x;prevOrig=null;$("idea").value=x.idea;$("tech").value=x.tech||"";view("result");show(x)}};
+$("clear").onclick=function(){store([]);drawHist()};
+
+/* progress */
+function progress(i){
+  main.innerHTML='<section class="panel"><h2>Checking your idea</h2><ol class="steps">'+STEPS.map(function(s,k){return '<li class="'+(k<i?"done":k===i?"on":"")+'"><span class="s"></span>'+s+'</li>'}).join("")+'</ol><p class="hint">This usually takes 30 to 70 seconds because prices are looked up on the web.</p></section>';
+}
+function startProgress(){progress(0);[4000,9000,16000,28000].forEach(function(t,k){timers.push(setTimeout(function(){progress(k+1)},t))})}
+function stopProgress(){timers.forEach(clearTimeout);timers=[]}
+
+/* run */
+function run(){
+  var idea=$("idea").value.trim();
+  var fe=$("formErr");if(idea.length<8){fe.textContent="Write at least one full sentence about your idea, then press Check my idea.";fe.hidden=false;$("idea").focus();return}fe.hidden=true;
+  btn.disabled=true;btn.textContent="Checking...";view("result");startProgress();
+  fetch("/api/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({idea:idea,level:$("level").value,time:$("time").value,budget:$("budget").value,currency:$("cur").value,tech:$("tech").value})})
+  .then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||"Request failed");return d})})
+  .then(function(d){
+    stopProgress();
+    current={idea:idea,level:$("level").value,time:$("time").value,cur:$("cur").value,budget:$("budget").value,tech:$("tech").value.trim(),r:d,at:Date.now()};
+    var h=load();h.unshift(current);store(h);drawHist();show(current);prevOrig=null;
+  })
+  .catch(function(e){
+    stopProgress();prevOrig=null;
+    var m=String(e.message||e),tip="Wait a minute and try again.";
+    if(/quota/i.test(m))tip="You used up the free Gemini limit for now. The daily limit resets once a day. Wait, or create a new API key, then try again.";else if(/503|429|demand/i.test(m))tip="Google's AI is busy right now. Wait a minute and check again.";
+    else if(/too many checks|daily limit/i.test(m))tip="This site limits how many checks each person can run. Please try again later.";else if(/API key|403|401/i.test(m))tip="Check the GEMINI_API_KEY in your .env file, then restart the server.";
+    else if(/404/.test(m))tip="The AI model name is not available. Set GEMINI_MODEL in your .env file to a current model, then restart the server.";
+    else if(/Failed to fetch|NetworkError/i.test(m))tip="The server is not running. Start it with npm start, then reload this page.";
+    main.innerHTML='<div class="err"><b>The check did not finish.</b><br>'+esc(tip)+'<details style="margin-top:8px"><summary>Technical details</summary><small>'+esc(m)+'</small></details></div>';
+  })
+  .then(function(){btn.disabled=false;btn.textContent="Check my idea"});
+}
+btn.onclick=run;
+$("idea").addEventListener("keydown",function(e){if(e.ctrlKey&&e.key==="Enter")run()});
+
+/* results */
+function recap(x){
+  var bits=[x.level,x.time].filter(Boolean).join(", ");
+  return '<section class="panel recap"><small>Your idea</small><p><b>'+esc(x.idea)+'</b></p><p class="hint">'+esc(bits)+(x.tech?'. Planned technologies: '+esc(x.tech):'')+'</p></section>';
+}
+function linkFor(name,ev){
+  var low=String(name||"").toLowerCase().trim();if(!low)return "";
+  var all=(ev.papers||[]).map(function(p){return{t:p.title,u:p.url}}).concat((ev.repos||[]).map(function(p){return{t:p.name,u:p.url}}));
+  for(var i=0;i<all.length;i++){var t=String(all[i].t||"").toLowerCase();if(t&&(t===low||t.indexOf(low)>-1||low.indexOf(t)>-1))return all[i].u}
+  return "";
+}
+function whyPanel(r,ev){
+  var c=r.comparison||[];
+  var tbl=c.length?'<div class="tbl"><table><thead><tr><th>Already exists</th><th>What it already does</th><th>What your idea shares</th><th>What yours is missing</th></tr></thead><tbody>'+c.map(function(k){var u=linkFor(k.existing,ev);return '<tr><th scope="row">'+(u?'<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(k.existing)+'</a>':esc(k.existing))+'</th><td>'+esc(k.what_it_does)+'</td><td>'+esc(k.overlap)+'</td><td>'+esc(k.gap)+'</td></tr>'}).join("")+'</tbody></table></div>':'<p class="empty">Not enough matching projects were found to build a comparison table.</p>';
+  return '<section class="panel"><h2>Why this is not unique</h2><ul class="plain">'+(r.weaknesses||[]).map(function(w){return '<li>'+esc(w)+'</li>'}).join("")+'</ul><h3>Your idea compared with what already exists</h3>'+tbl+'</section>';
+}
+function uniquePanel(r){
+  var u=r.uniqueness||[];if(!u.length)return "";
+  return '<section class="panel"><h2>How to become unique</h2><div class="tbl"><table><thead><tr><th>Part</th><th>Common approach today</th><th>How to make it unique</th><th>Effort</th></tr></thead><tbody>'+u.map(function(k){return '<tr><th scope="row">'+esc(k.part)+'</th><td>'+esc(k.common)+'</td><td>'+esc(k.unique)+'</td><td>'+esc(k.effort)+'</td></tr>'}).join("")+'</tbody></table></div></section>';
+}
+function metric(name,v){v=n(v);return '<div class="sc"><span>'+name+'</span><span class="bar"><i style="width:'+v+'%"></i></span><span>'+v+'% ('+lvl(v)+')</span></div>'}
+var SYM={INR:"₹",USD:"$",GBP:"£"};
+function money(v,c){v=Number(v);if(isNaN(v))return "-";return (SYM[c]||"")+v.toLocaleString("en-IN")}
+function techPanel(r){
+  var t=r.tech_stack||[];if(!t.length)return "";
+  return '<section class="panel"><h2>Technologies to use</h2><div class="tbl"><table><thead><tr><th>Part</th><th>Tool</th><th>Why</th><th>Cost</th></tr></thead><tbody>'+t.map(function(k){return '<tr><th scope="row">'+esc(k.layer)+'</th><td>'+esc(k.tool)+'</td><td>'+esc(k.why)+'</td><td><span class="'+(k.free?"free":"paid")+'">'+(k.free?"Free":"Paid")+'</span></td></tr>'}).join("")+'</tbody></table></div></section>';
+}
+function priceNote(r){
+  var src=(r.price_sources||[]).map(function(s){return '<a href="'+esc(s.url)+'" target="_blank" rel="noopener">'+esc(s.title)+'</a>'}).join(", ");
+  if(r.budget_check==="verified")return '<p class="note"><b class="ok">Prices checked on the web on '+esc(r.price_date)+'.</b> Items marked "estimate" could not be found. Sources: '+src+'. Prices change, so open the links before you buy.</p>';
+  if(r.budget_check==="off")return '<p class="note"><b class="warn">Estimates only.</b> The live price check is turned off, so these figures come from the AI\'s general knowledge. Check current prices before you buy anything.</p>';
+  if(r.budget_check==="all_free")return '<p class="note">Everything suggested has a free option, so no price lookup was needed.</p>';
+  return '<p class="note"><b class="warn">Estimates only.</b> The live price check did not work this time, so these figures come from the AI\'s general knowledge. Check current prices before you buy anything.</p>';
+}
+function budgetPanel(x){
+  var b=x.r.budget;if(!b)return "";var c=x.cur||"INR";
+  var fit=b.fits_budget===true?'<p class="ok">This should fit your budget of '+esc(money(x.budget,c))+'.</p>':b.fits_budget===false?'<p class="warn">This may go over your budget of '+esc(money(x.budget,c))+'. See the cheapest way below.</p>':"";
+  return '<section class="panel"><h2>Budget</h2><p class="big">'+esc(money(b.min,c))+' to '+esc(money(b.max,c))+'</p>'+fit
+  +(b.items||[]).map(function(i){return '<div class="costline"><span>'+esc(i.item)+'<small>'+esc(i.note||"")+'</small></span><b>'+esc(Number(i.cost)===0?"Free":money(i.cost,c))+'</b>'+(Number(i.cost)>0?'<small>'+(i.verified?"checked online":"estimate")+'</small>':"")+'</div>'}).join("")
+  +(b.free_option?'<h3>Cheapest way to build it</h3><p style="margin:0">'+esc(b.free_option)+'</p>':"")
+  +(b.advice?'<p class="hint">'+esc(b.advice)+'</p>':"")
+  +priceNote(x.r)+'</section>';
+}
+function show(x){
+  var r=x.r,ev=r.evidence||{},v=V[r.verdict]||V["CHANGE IT"],o=n(r.originality);
+  var delta=prevOrig!=null?'<span class="chg">Originality: '+prevOrig+'% before, '+o+'% now</span>':"";
+  var papers=(ev.papers||[]).map(function(p){return '<li><a href="'+esc(p.url)+'" target="_blank" rel="noopener">'+esc(p.title)+'</a><small>'+esc(p.year||"")+(p.citationCount!=null?", cited "+esc(p.citationCount)+" times":"")+'</small></li>'}).join("")||'<li class="empty">No papers found for these search terms.</li>';
+  var repos=(ev.repos||[]).map(function(p){return '<li><a href="'+esc(p.url)+'" target="_blank" rel="noopener">'+esc(p.name)+'</a><small>'+esc(p.stars)+' stars. '+esc(p.desc||"No description")+'</small></li>'}).join("");
+  var ghNote=ev.githubWorked?'About '+esc(ev.githubTotalRepos)+' GitHub repositories match these searches.':'GitHub search did not work, so this result uses papers and general knowledge only. Add GITHUB_TOKEN to your .env file to fix this.';
+  var html='<div class="res">'+recap(x)
+  +'<section class="verdict '+v.c+'"><h2>'+v.t+'</h2><p>'+esc(r.verdict_reason)+'</p>'+delta+'</section>'
+  +'<section class="panel"><h2>Scores</h2><div class="scores">'+metric("Originality",r.originality)+metric("Future scope",r.future_scope)+metric("Company interest",r.company_interest)+metric("Research value",r.research_value)
+  +'<div class="sc"><span>Difficulty</span><span><span class="pill">'+esc(r.difficulty)+'</span></span><span></span></div></div>'
+  +'<p class="note">Scores are estimates from the evidence below and the AI\'s judgement. Use them to compare ideas, not as exact measurements.</p></section>'
+  +whyPanel(r,ev)+uniquePanel(r)
+  +'<section class="panel"><h2>Three more unique versions</h2>'+(r.mutations||[]).map(function(m,i){return '<div class="mut"><b>'+esc(m.title)+'</b><p>'+esc(m.change)+'</p><span class="m">About '+n(m.new_originality)+'% original</span><span class="m">Difficulty: '+esc(m.difficulty)+'</span>'+(m.extra_cost?'<span class="m">'+esc(m.extra_cost)+'</span>':'')+'<button type="button" class="btn2" data-m="'+i+'">Check this version</button></div>'}).join("")+'</section>'
+  +techPanel(r)+budgetPanel(x)+'<section class="panel"><h2>Evidence we found</h2><p class="hint" style="margin-top:0">'+ghNote+' Search terms used: '+esc((r.queries||[]).join(", "))+'.</p>'
+  +'<div class="tabs" role="tablist"><button class="tab" role="tab" aria-selected="true" data-t="p">Research papers ('+(ev.papers||[]).length+')</button><button class="tab" role="tab" aria-selected="false" data-t="g">GitHub projects ('+(ev.repos||[]).length+')</button></div>'
+  +'<ul class="ev" id="evP">'+papers+'</ul><ul class="ev" id="evG" hidden>'+(repos||'<li class="empty">No GitHub projects to show.</li>')+'</ul></section>'
+  +'<div class="acts"><button class="btn2" id="copy">Copy report</button><button class="btn2" id="dl">Download report</button><button class="btn2" id="pr">Print or save as PDF</button></div></div>';
+  main.innerHTML=html;window.scrollTo(0,0);
+}
+main.addEventListener("click",function(e){
+  var t=e.target;
+  if(t.dataset.m!=null&&current){var m=current.r.mutations[t.dataset.m];prevOrig=n(current.r.originality);$("idea").value=m.title+". "+m.change;run()}
+  else if(t.dataset.t){main.querySelectorAll(".tab").forEach(function(b){b.setAttribute("aria-selected",b===t?"true":"false")});$("evP").hidden=t.dataset.t!=="p";$("evG").hidden=t.dataset.t!=="g"}
+  else if(t.id==="copy"&&current){var s=report(current),b=t;(navigator.clipboard?navigator.clipboard.writeText(s):Promise.reject()).then(function(){b.textContent="Copied"}).catch(function(){b.textContent="Copy failed, use Download"});setTimeout(function(){b.textContent="Copy report"},2000)}
+  else if(t.id==="dl"&&current){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([report(current)],{type:"text/markdown"}));a.download="ideaforge-report.md";a.click()}
+  else if(t.id==="pr")window.print();
+});
+function report(x){
+  var r=x.r,ev=r.evidence||{};
+  return "# IdeaForge-X report\n\n**Idea:** "+x.idea+"\n**Student level:** "+x.level+", time: "+x.time+(x.tech?"\n**Planned technologies:** "+x.tech:"")+"\n\n## Verdict: "+(V[r.verdict]||V["CHANGE IT"]).t+"\n"+r.verdict_reason+"\n\n## Scores (estimates)\n- Originality: "+n(r.originality)+"%\n- Future scope: "+n(r.future_scope)+"%\n- Company interest: "+n(r.company_interest)+"%\n- Research value: "+n(r.research_value)+"%\n- Difficulty: "+r.difficulty+"\n\n## Why this is not unique\n"+(r.comparison||[]).map(function(c){return "- "+c.existing+": already "+c.what_it_does+"; missing in yours: "+c.gap}).join("\n")+"\n\n## How to become unique\n"+(r.uniqueness||[]).map(function(u){return "- "+u.part+": instead of "+u.common+", "+u.unique+" (effort: "+u.effort+")"}).join("\n")+"\n\n## Technologies\n"+(r.tech_stack||[]).map(function(k){return "- "+k.layer+": "+k.tool+" ("+(k.free?"free":"paid")+"), "+k.why}).join("\n")+"\n\n## Estimated budget\n"+(r.budget?money(r.budget.min,x.cur||"INR")+" to "+money(r.budget.max,x.cur||"INR")+"\n"+(r.budget.items||[]).map(function(i){return "- "+i.item+": "+money(i.cost,x.cur||"INR")}).join("\n")+"\n"+(r.budget_check==="verified"?"Prices checked online on "+r.price_date+".":"Estimates only.")+"\nCheapest way: "+(r.budget.free_option||""):"Not available")+"\n\n## Why it may not stand out\n"+(r.weaknesses||[]).map(function(w){return "- "+w}).join("\n")+"\n\n## Make it more unique\n"+(r.mutations||[]).map(function(m,i){return (i+1)+". **"+m.title+"** ("+n(m.new_originality)+"% original, "+m.difficulty+"): "+m.change}).join("\n")+"\n\n## Evidence\n"+(ev.papers||[]).map(function(p){return "- "+p.title+" ("+(p.year||"")+") "+p.url}).join("\n")+"\n"+(ev.repos||[]).map(function(p){return "- "+p.name+" "+p.url}).join("\n")+"\n";
+}
+drawHist();
+})();
+</script>
+</body>
+</html>
