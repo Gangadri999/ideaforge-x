@@ -212,9 +212,12 @@ function fileBackend() {
 }
 
 async function firebaseBackend() {
-  const { default: admin } = await import("firebase-admin");
-  admin.initializeApp({ credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)) });
-  const db = admin.firestore();
+  const { initializeApp, cert } = await import("firebase-admin/app");
+  const { getFirestore } = await import("firebase-admin/firestore");
+  let raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+  if (!raw && process.env.FIREBASE_SERVICE_ACCOUNT_FILE) raw = fs.readFileSync(path.resolve(process.env.FIREBASE_SERVICE_ACCOUNT_FILE), "utf8");
+  const account = JSON.parse(raw);
+  const db = getFirestore(initializeApp({ credential: cert(account) }));
   const pack = (c, doc) => {
     const d = JSON.parse(JSON.stringify(doc));
     if (c !== "users") d.data = JSON.stringify(d.data ?? null); // report kept as text, so Firestore never rejects its shape
@@ -222,6 +225,7 @@ async function firebaseBackend() {
   };
   const warn = (e) => console.log("Firebase save failed:", e.message);
   return {
+    project: account.project_id,
     async load() {
       for (const c of ["users", "checks", "subs"]) {
         const snap = await db.collection(c).get();
@@ -238,15 +242,22 @@ async function firebaseBackend() {
 }
 
 async function initStorage() {
-  if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+  if (process.env.FIREBASE_SERVICE_ACCOUNT || process.env.FIREBASE_SERVICE_ACCOUNT_FILE) {
     try {
       backend = await firebaseBackend();
-      await backend.load();
+      await Promise.race([
+        backend.load(),
+        new Promise((_, no) => setTimeout(() => no(new Error("Firebase did not answer within 20 seconds.")), 20000)),
+      ]);
       storageMode = "firebase";
-      console.log("Storage: Firebase Firestore");
+      console.log("Storage: Firebase Firestore (project " + backend.project + "). Loaded " + state.users.length + " users, " + state.checks.length + " checks, " + state.subs.length + " sent ideas.");
       return;
     } catch (e) {
-      console.log("Firebase did not start:", e.message, "\nUsing temporary file storage instead.");
+      let hint = "";
+      if (/NOT_FOUND|5 NOT_FOUND/.test(e.message)) hint = "\nHint: open the Firebase console, go to Build > Firestore Database, and click Create database.";
+      else if (/PERMISSION_DENIED|7 PERMISSION/.test(e.message)) hint = "\nHint: the key does not have access. Create a new private key for this project.";
+      else if (/JSON|Unexpected token|private_key|credential/i.test(e.message)) hint = "\nHint: the service account key looks wrong. Paste the whole JSON file again.";
+      console.log("Firebase did not start:", e.message + hint + "\nUsing temporary file storage instead.");
       state.users = []; state.checks = []; state.subs = [];
     }
   }
