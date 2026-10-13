@@ -44,6 +44,7 @@ function limitReached(ip) {
   return null;
 }
 
+
 const GEMINI = process.env.GEMINI_API_KEY;
 const MODELS = [
   process.env.GEMINI_MODEL,
@@ -173,18 +174,217 @@ async function searchGithub(q) {
   };
 }
 
+// Saves each check on the student's account (latest 12 kept; sent ideas are never removed).
+function addCheck(user, meta, data) {
+  const rec = { id: rid(8), userId: user.id, ...meta, at: Date.now(), data };
+  state.checks.push(rec);
+  backend.put("checks", rec);
+  const mine = state.checks.filter((c) => c.userId === user.id).sort((a, b) => b.at - a.at);
+  for (const old of mine.slice(12)) {
+    if (state.subs.some((x) => x.checkId === old.id)) continue;
+    state.checks = state.checks.filter((c) => c.id !== old.id);
+    backend.del("checks", old.id);
+  }
+  return rec.id;
+}
+
+// ---------- Storage: a file by default, Firebase Firestore when FIREBASE_SERVICE_ACCOUNT is set ----------
+const DATA_DIR = process.env.DATA_DIR || path.dirname(fileURLToPath(import.meta.url));
+const DATA_FILE = path.join(DATA_DIR, "data.json");
+const state = { users: [], checks: [], subs: [] };
+let storageMode = "file";
+let backend;
+const rid = (n = 8) => crypto.randomBytes(n).toString("hex");
+
+function fileBackend() {
+  let timer = null;
+  const later = () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      try { fs.writeFileSync(DATA_FILE, JSON.stringify(state)); } catch (e) { console.log("Could not save data:", e.message); }
+    }, 300);
+  };
+  return {
+    async load() { try { Object.assign(state, JSON.parse(fs.readFileSync(DATA_FILE, "utf8"))); } catch (e) { /* first run */ } },
+    put: later,
+    del: later,
+  };
+}
+
+async function firebaseBackend() {
+  const { default: admin } = await import("firebase-admin");
+  admin.initializeApp({ credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)) });
+  const db = admin.firestore();
+  const pack = (c, doc) => {
+    const d = JSON.parse(JSON.stringify(doc));
+    if (c !== "users") d.data = JSON.stringify(d.data ?? null); // report kept as text, so Firestore never rejects its shape
+    return d;
+  };
+  const warn = (e) => console.log("Firebase save failed:", e.message);
+  return {
+    async load() {
+      for (const c of ["users", "checks", "subs"]) {
+        const snap = await db.collection(c).get();
+        state[c] = snap.docs.map((d) => {
+          const x = d.data();
+          if (c !== "users" && typeof x.data === "string") x.data = JSON.parse(x.data);
+          return x;
+        });
+      }
+    },
+    put(c, doc) { db.collection(c).doc(doc.id).set(pack(c, doc)).catch(warn); },
+    del(c, id) { db.collection(c).doc(id).delete().catch(warn); },
+  };
+}
+
+async function initStorage() {
+  if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    try {
+      backend = await firebaseBackend();
+      await backend.load();
+      storageMode = "firebase";
+      console.log("Storage: Firebase Firestore");
+      return;
+    } catch (e) {
+      console.log("Firebase did not start:", e.message, "\nUsing temporary file storage instead.");
+      state.users = []; state.checks = []; state.subs = [];
+    }
+  }
+  backend = fileBackend();
+  await backend.load();
+  console.log("Storage: file " + DATA_FILE + (LIMITS_ON ? " (this is wiped on restart on most free hosts)" : ""));
+}
+
+// ---------- Helpers ----------
+const clean = (v, n) => String(v || "").replace(/\s+/g, " ").trim().slice(0, n);
+const sha = (v) => crypto.createHash("sha256").update(String(v)).digest();
+const safeEq = (a, b) => crypto.timingSafeEqual(sha(a), sha(b));
+const tally = new Map();
+function tooMany(bucket, key, max) {
+  const now = Date.now(), recent = (tally.get(bucket + key) || []).filter((t) => now - t < 3600e3);
+  if (recent.length >= max) { tally.set(bucket + key, recent); return true; }
+  recent.push(now); tally.set(bucket + key, recent);
+  return false;
+}
+const fails = new Map();
+const recentFails = (k) => { const now = Date.now(), a = (fails.get(k) || []).filter((t) => now - t < 3600e3); fails.set(k, a); return a; };
+
+// ---------- Passwords and login sessions ----------
+const TEACHER_CODE = process.env.TEACHER_CODE; // teachers need this code to create their account
+const SESSION_SECRET = process.env.SESSION_SECRET || crypto.randomBytes(32).toString("hex");
+if (!process.env.SESSION_SECRET) console.log("Tip: set SESSION_SECRET in .env so people stay logged in after a restart.");
+const scryptAsync = (pw, salt) => new Promise((ok, no) => crypto.scrypt(pw, salt, 64, (e, k) => (e ? no(e) : ok(k))));
+async function hashPw(pw) { const salt = rid(16); return salt + "." + (await scryptAsync(pw, salt)).toString("hex"); }
+async function checkPw(pw, stored) {
+  const [salt, hash] = String(stored || "").split(".");
+  if (!salt || !hash) { await scryptAsync(pw, "00"); return false; } // same work for unknown emails
+  const k = await scryptAsync(pw, salt), h = Buffer.from(hash, "hex");
+  return h.length === k.length && crypto.timingSafeEqual(h, k);
+}
+const mac = (b) => crypto.createHmac("sha256", SESSION_SECRET).update(b).digest("base64url");
+const sign = (p) => { const b = Buffer.from(JSON.stringify(p)).toString("base64url"); return b + "." + mac(b); };
+function verify(tok) {
+  const [b, m] = String(tok || "").split(".");
+  if (!b || !m) return null;
+  const want = mac(b);
+  if (m.length !== want.length || !crypto.timingSafeEqual(Buffer.from(m), Buffer.from(want))) return null;
+  try { const p = JSON.parse(Buffer.from(b, "base64url").toString()); return p.exp > Date.now() ? p : null; } catch (e) { return null; }
+}
+const readCookie = (req, name) => {
+  const c = (req.headers.cookie || "").split(";").map((x) => x.trim()).find((x) => x.startsWith(name + "="));
+  return c ? decodeURIComponent(c.slice(name.length + 1)) : "";
+};
+const publicUser = (u) => ({ id: u.id, name: u.name, email: u.email, role: u.role, roll: u.roll || "", batch: u.batch || "" });
+const startSession = (req, res, u) =>
+  res.cookie("ifx_s", sign({ uid: u.id, exp: Date.now() + 7 * 864e5 }), { httpOnly: true, sameSite: "lax", secure: req.secure, maxAge: 7 * 864e5, path: "/" });
+
+// Changing data needs a JSON request. Other websites cannot send those to us, which blocks forged form posts.
+app.use((req, res, next) => {
+  if (req.method !== "GET" && req.path.startsWith("/api/") && !/application\/json/i.test(req.get("content-type") || "")) {
+    return res.status(415).json({ error: "Unsupported request." });
+  }
+  next();
+});
+app.use((req, res, next) => {
+  const p = verify(readCookie(req, "ifx_s"));
+  req.user = p ? state.users.find((u) => u.id === p.uid) || null : null;
+  next();
+});
+const needUser = (req, res, next) => (req.user ? next() : res.status(401).json({ error: "Please log in first." }));
+const needStudent = (req, res, next) => (!req.user ? res.status(401).json({ error: "Please log in first." }) : req.user.role !== "student" ? res.status(403).json({ error: "Only students can send ideas to a teacher." }) : next());
+const needTeacher = (req, res, next) => (!req.user ? res.status(401).json({ error: "Please log in first." }) : req.user.role !== "teacher" ? res.status(403).json({ error: "Teachers only." }) : next());
+
+const EMAIL = /^[^\s@]{1,64}@[^\s@]{1,200}\.[^\s@]{2,}$/;
+
+app.post("/api/auth/register", async (req, res) => {
+  try {
+    if (tooMany("reg", req.ip, 30)) return res.status(429).json({ error: "Too many sign-ups from this connection. Try again later." });
+    const b = req.body || {};
+    const role = b.role === "teacher" ? "teacher" : "student";
+    const name = clean(b.name, 80), email = clean(b.email, 120).toLowerCase(), pw = String(b.password || "");
+    const roll = clean(b.roll, 40), batch = clean(b.batch, 60);
+    if (!name) return res.status(400).json({ error: "Enter your name." });
+    if (!EMAIL.test(email)) return res.status(400).json({ error: "Enter a valid email address." });
+    if (pw.length < 8 || pw.length > 128) return res.status(400).json({ error: "Password must be 8 to 128 characters." });
+    if (state.users.some((u) => u.email === email)) return res.status(409).json({ error: "An account with this email already exists. Try logging in." });
+    if (role === "teacher") {
+      if (!TEACHER_CODE) return res.status(403).json({ error: "Teacher sign-up is turned off. Ask the person who runs this site." });
+      if (tooMany("invite", req.ip, 8)) return res.status(429).json({ error: "Too many tries. Please wait an hour." });
+      if (!safeEq(b.inviteCode || "", TEACHER_CODE)) return res.status(403).json({ error: "Wrong teacher code." });
+    } else {
+      if (!roll) return res.status(400).json({ error: "Enter your roll number." });
+      if (state.users.some((u) => u.role === "student" && (u.roll || "").toLowerCase() === roll.toLowerCase() && (u.batch || "").toLowerCase() === batch.toLowerCase())) {
+        return res.status(409).json({ error: "That roll number is already registered in this batch. Try logging in." });
+      }
+    }
+    const u = { id: rid(8), role, name, email, roll: role === "student" ? roll : "", batch: role === "student" ? batch : "", pw: await hashPw(pw), at: Date.now() };
+    state.users.push(u);
+    backend.put("users", u);
+    startSession(req, res, u);
+    res.json({ user: publicUser(u), next: role === "teacher" ? "/teacher" : "/" });
+  } catch (e) {
+    res.status(500).json({ error: "Could not create the account. Please try again." });
+  }
+});
+
+app.post("/api/auth/login", async (req, res) => {
+  try {
+    const email = clean(req.body?.email, 120).toLowerCase(), pw = String(req.body?.password || "").slice(0, 128);
+    if (recentFails("e" + email).length >= 8 || recentFails("i" + req.ip).length >= 40) {
+      return res.status(429).json({ error: "Too many wrong tries. Please wait an hour and try again." });
+    }
+    const u = state.users.find((x) => x.email === email);
+    const ok = await checkPw(pw, u?.pw);
+    if (!u || !ok) {
+      recentFails("e" + email).push(Date.now());
+      recentFails("i" + req.ip).push(Date.now());
+      return res.status(401).json({ error: "Wrong email or password." });
+    }
+    fails.delete("e" + email);
+    startSession(req, res, u);
+    res.json({ user: publicUser(u), next: u.role === "teacher" ? "/teacher" : "/" });
+  } catch (e) {
+    res.status(500).json({ error: "Could not log in. Please try again." });
+  }
+});
+
+app.post("/api/auth/logout", (req, res) => { res.clearCookie("ifx_s", { path: "/" }); res.json({ ok: true }); });
+app.get("/api/me", (req, res) => res.json({ user: req.user ? publicUser(req.user) : null, storage: storageMode, online: LIMITS_ON }));
+app.get("/login", (req, res) => res.sendFile(path.join(PUBLIC, "login.html")));
+
 app.post("/api/analyze", async (req, res) => {
   try {
+    if (!req.user) return res.status(401).json({ error: "Please log in to check your idea." });
     const { idea, level = "final-year student", time = "4 months", budget = "", currency = "INR", tech = "" } = req.body;
     if (!idea || idea.length < 8) return res.status(400).json({ error: "Describe your idea first." });
     if (!GEMINI) return res.status(500).json({ error: "Set GEMINI_API_KEY in .env" });
 
     const key = keyOf({ idea: idea.trim().replace(/\s+/g, " "), level, time, budget, currency, tech, DROP_AT, BUILD_AT });
     const hit = cache[key];
-    if (hit && !req.body.fresh && Date.now() - hit.at < 7 * 864e5) return res.json({ ...hit.data, cached: true });
+    if (hit && !req.body.fresh && Date.now() - hit.at < 7 * 864e5) return res.json({ ...hit.data, cached: true, checkId: addCheck(req.user, { idea, tech, level, time, budget, currency }, hit.data) });
 
     if (LIMITS_ON) {
-      const why = limitReached(req.ip);
+      const why = limitReached(req.user.id);
       if (why === "hour") return res.status(429).json({ error: "Too many checks from this connection. Please try again in an hour." });
       if (why === "day") return res.status(429).json({ error: "This site reached its daily limit of checks. Please try again tomorrow." });
     }
@@ -259,10 +459,117 @@ Budget rules: these are rough estimates for building one student project in ${cu
       cache[key] = { at: Date.now(), data: result };
       try { fs.writeFileSync(CACHE_FILE, JSON.stringify(cache)); } catch (e) {}
     }
-    res.json(result);
+    res.json({ ...result, checkId: addCheck(req.user, { idea, tech, level, time, budget, currency }, result) });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });
 
+// ---------- Student: my checks and sending to a teacher ----------
+const submissionOf = (checkId) => state.subs.find((x) => x.checkId === checkId);
+const subInfo = (x) => (x ? { status: x.status, comment: x.comment } : null);
+
+app.get("/api/my/checks", needUser, (req, res) => {
+  res.json(state.checks.filter((c) => c.userId === req.user.id).sort((a, b) => b.at - a.at).map((c) => ({
+    id: c.id, idea: c.idea, at: c.at, originality: c.data?.originality, verdict: c.data?.verdict, submission: subInfo(submissionOf(c.id)),
+  })));
+});
+
+app.get("/api/my/checks/:id", needUser, (req, res) => {
+  const c = state.checks.find((x) => x.id === req.params.id && x.userId === req.user.id);
+  if (!c) return res.status(404).json({ error: "Not found." });
+  res.json({ id: c.id, idea: c.idea, tech: c.tech || "", level: c.level, time: c.time, budget: c.budget || "", cur: c.currency || "INR", at: c.at, r: c.data, submission: subInfo(submissionOf(c.id)) });
+});
+
+app.delete("/api/my/checks", needUser, (req, res) => {
+  const gone = state.checks.filter((c) => c.userId === req.user.id && !submissionOf(c.id));
+  state.checks = state.checks.filter((c) => !gone.includes(c));
+  gone.forEach((c) => backend.del("checks", c.id));
+  res.json({ removed: gone.length });
+});
+
+app.post("/api/submit", needStudent, (req, res) => {
+  const c = state.checks.find((x) => x.id === String(req.body?.checkId || "") && x.userId === req.user.id);
+  if (!c) return res.status(404).json({ error: "We could not find that check. Check your idea again, then send it." });
+  const already = submissionOf(c.id);
+  if (already) return res.json({ submission: subInfo(already) });
+  if (tooMany("submit", req.user.id, 20)) return res.status(429).json({ error: "Too many submissions. Try again in an hour." });
+  if (state.subs.length >= 5000) return res.status(507).json({ error: "The teacher's list is full." });
+  const u = req.user, d = c.data || {};
+  const sub = {
+    id: rid(6), checkId: c.id, userId: u.id, name: u.name, email: u.email, roll: u.roll, batch: u.batch,
+    idea: c.idea, tech: c.tech || "", level: c.level, time: c.time, at: Date.now(),
+    originality: d.originality, verdict: d.verdict, difficulty: d.difficulty,
+    status: "Pending", comment: "", data: d,
+  };
+  state.subs.push(sub);
+  backend.put("subs", sub);
+  res.json({ submission: subInfo(sub) });
+});
+
+// ---------- Teacher ----------
+const STOP = new Set("and the for with using use from that this are its into app system project based tool web build make new via".split(" "));
+const words = (t) => new Set(String(t || "").toLowerCase().split(/[^\p{L}\p{N}]+/u).filter((w) => w.length > 2 && !STOP.has(w)));
+function overlap(a, b) {
+  if (!a.size || !b.size) return 0;
+  let both = 0;
+  for (const w of a) if (b.has(w)) both++;
+  return both / (a.size + b.size - both);
+}
+// Ideas in the same batch that share many words. A pointer for the teacher, not proof.
+function similarFor(list) {
+  const toks = list.map((s) => words(s.idea));
+  return list.map((s, i) => {
+    const found = [];
+    list.forEach((o, j) => {
+      if (i === j || (o.batch || "").toLowerCase() !== (s.batch || "").toLowerCase() || o.userId === s.userId) return;
+      const p = overlap(toks[i], toks[j]);
+      if (p >= 0.35) found.push({ id: o.id, name: o.name, roll: o.roll, idea: o.idea, pct: Math.round(p * 100) });
+    });
+    return found.sort((x, y) => y.pct - x.pct).slice(0, 3);
+  });
+}
+
+app.get("/teacher", (req, res) => {
+  if (!req.user) return res.redirect("/login?next=/teacher");
+  if (req.user.role !== "teacher") return res.redirect("/");
+  res.sendFile(path.join(PUBLIC, "teacher.html"));
+});
+
+app.get("/api/teacher/submissions", needTeacher, (req, res) => {
+  const sim = similarFor(state.subs);
+  res.json(state.subs.map((s, i) => ({
+    id: s.id, name: s.name, email: s.email, roll: s.roll, batch: s.batch, idea: s.idea, tech: s.tech, at: s.at,
+    originality: s.originality, verdict: s.verdict, difficulty: s.difficulty, status: s.status, comment: s.comment, by: s.by || "", similar: sim[i],
+  })).reverse());
+});
+
+app.get("/api/teacher/submissions/:id", needTeacher, (req, res) => {
+  const i = state.subs.findIndex((x) => x.id === req.params.id);
+  if (i < 0) return res.status(404).json({ error: "Not found." });
+  res.json({ ...state.subs[i], similar: similarFor(state.subs)[i] });
+});
+
+app.patch("/api/teacher/submissions/:id", needTeacher, (req, res) => {
+  const s = state.subs.find((x) => x.id === req.params.id);
+  if (!s) return res.status(404).json({ error: "Not found." });
+  const status = String(req.body?.status || "");
+  if (!["Pending", "Approved", "Needs change", "Rejected"].includes(status)) return res.status(400).json({ error: "Pick a decision." });
+  s.status = status;
+  s.comment = clean(req.body?.comment, 500);
+  s.by = req.user.name;
+  s.decidedAt = Date.now();
+  backend.put("subs", s);
+  res.json({ ok: true });
+});
+
+app.delete("/api/teacher/submissions/:id", needTeacher, (req, res) => {
+  const s = state.subs.find((x) => x.id === req.params.id);
+  if (!s) return res.status(404).json({ error: "Not found." });
+  state.subs = state.subs.filter((x) => x !== s);
+  backend.del("subs", s.id);
+  res.json({ ok: true });
+});
+
+await initStorage();
 app.listen(process.env.PORT || 3000, () => console.log("IdeaForge-X on http://localhost:" + (process.env.PORT || 3000)));

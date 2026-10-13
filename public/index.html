@@ -177,6 +177,10 @@ details.more summary,details.past summary{cursor:pointer;color:var(--blue);font-
 .box.mine{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue)}
 .sec .two{margin-top:6px}
 .sec details.q{max-width:760px}
+.navuser{display:flex;gap:10px;align-items:center}
+.band-hero .nav .navbtn,.navbtn{font:inherit;font-size:14px;font-weight:600;color:#fff;background:transparent;border:1px solid #8fb0ff;border-radius:8px;padding:6px 12px;text-decoration:none;cursor:pointer}
+.navhi{color:#fff;font-size:15px}
+.hist .st{color:var(--mu);font-size:12px;margin-right:4px;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -190,6 +194,7 @@ details.more summary,details.past summary{cursor:pointer;color:var(--blue);font-
       <li><a href="#get">What you get</a></li>
       <li><a href="#diff">Why it is different</a></li>
       <li><a href="#faq">Questions</a></li>
+      <li id="navUser" class="navuser"></li>
     </ul>
   </nav>
   <div class="hero2">
@@ -223,12 +228,13 @@ details.more summary,details.past summary{cursor:pointer;color:var(--blue);font-
         </div>
       </details>
       <button class="btn" id="go">Check my idea</button>
+      <p class="hint" id="loginNote" hidden>You need a free account to check ideas. We will ask you to log in or sign up.</p>
       <p class="errtxt" id="formErr" role="alert" hidden></p>
       <details class="past">
-        <summary>Past checks</summary>
+        <summary>My ideas</summary>
         <ul class="hist" id="hist"></ul>
-        <p class="empty" id="histEmpty">Your checked ideas will appear here.</p>
-        <button class="link" id="clear" hidden>Clear past checks</button>
+        <p class="empty" id="histEmpty">Log in to see your saved checks.</p>
+        <button class="link" id="clear" hidden>Clear my unsent checks</button>
       </details>
     </section>
   </div>
@@ -282,7 +288,7 @@ details.more summary,details.past summary{cursor:pointer;color:var(--blue);font-
 <div class="wrap sec" id="faq">
   <h2>Questions</h2>
   <details class="q"><summary>Is the score exact?</summary><p>No. It is an estimate. Use it to compare ideas, and open the links yourself to check.</p></details>
-  <details class="q"><summary>Where does my idea go?</summary><p>Your idea is sent to Google's Gemini AI and to paper and GitHub search. Your past checks stay only in your browser.</p></details>
+  <details class="q"><summary>Where does my idea go?</summary><p>Your idea is sent to Google's Gemini AI and to paper and GitHub search. Your account and your checks are saved on this site's server. If you choose Send to teacher, your teacher sees your name, roll number and report. Your password is stored scrambled, never as plain text.</p></details>
   <details class="q"><summary>Is it free?</summary><p>There is no sign-up. It uses your own free Gemini key, so the limits come from Google.</p></details>
   <details class="q"><summary>Can it replace my project guide?</summary><p>No. It helps you talk to your guide with proof. Your guide decides what is allowed.</p></details>
 </div>
@@ -293,7 +299,7 @@ details.more summary,details.past summary{cursor:pointer;color:var(--blue);font-
     <main id="main" aria-live="polite"></main>
   </div>
 </div>
-<footer><div class="wrap">IdeaForge-X is a student project tool. Results are estimates. They do not replace your guide's advice. A college version is planned for later. Built with Node.js, Express, the Gemini API, Semantic Scholar, arXiv and GitHub search.</div></footer>
+<footer><div class="wrap">IdeaForge-X is a student project tool. Results are estimates. They do not replace your guide's advice. Teachers can review sent ideas in the <a href="/teacher">teacher view</a>. Built with Node.js, Express, the Gemini API, Semantic Scholar, arXiv and GitHub search.</div></footer>
 
 <script>
 (function(){
@@ -313,21 +319,31 @@ $("again").onclick=function(){view("home");var c=$("checker");if(c)c.scrollIntoV
 function esc(s){var d=document.createElement("div");d.textContent=s==null?"":String(s);return d.innerHTML}
 function n(v){v=Number(v);return isNaN(v)?0:Math.max(0,Math.min(100,Math.round(v)))}
 function lvl(v){return v>=70?"High":v>=40?"Medium":"Low"}
-function load(){try{return JSON.parse(localStorage.getItem("ifx_hist")||"[]")}catch(e){return[]}}
-function store(a){try{localStorage.setItem("ifx_hist",JSON.stringify(a.slice(0,15)))}catch(e){}}
+var me=null,HIST=[];
+function load(){return HIST}
 
 /* examples */
 $("chips").innerHTML=EXAMPLES.map(function(x){return '<button type="button" class="chip">'+esc(x)+'</button>'}).join("");
 $("chips").onclick=function(e){if(e.target.className==="chip"){$("idea").value=e.target.textContent;$("idea").focus()}};
 
-/* history */
+/* history (saved on the student's account) */
 function drawHist(){
   var h=load(),ul=$("hist");
-  $("histEmpty").hidden=h.length>0;$("clear").hidden=h.length===0;
-  ul.innerHTML=h.map(function(x,i){var v=V[x.r.verdict]||V["CHANGE IT"];return '<li><button type="button" data-i="'+i+'"><span class="dot '+v.d+'"></span><span class="t">'+esc(x.idea)+'</span><b>'+n(x.r.originality)+'%</b></button></li>'}).join("");
+  $("histEmpty").hidden=h.length>0;$("clear").hidden=h.length===0||!me;
+  $("histEmpty").textContent=me?"Your checked ideas will appear here.":"Log in to see your saved checks.";
+  ul.innerHTML=h.map(function(x,i){var v=V[x.verdict]||V["CHANGE IT"];var st=x.submission?'<small class="st">'+esc(x.submission.status)+'</small>':"";return '<li><button type="button" data-i="'+i+'"><span class="dot '+v.d+'"></span><span class="t">'+esc(x.idea)+'</span>'+st+'<b>'+n(x.originality)+'%</b></button></li>'}).join("");
 }
-$("hist").onclick=function(e){var b=e.target.closest("button");if(!b)return;var x=load()[b.dataset.i];if(x){current=x;prevOrig=null;$("idea").value=x.idea;$("tech").value=x.tech||"";view("result");show(x)}};
-$("clear").onclick=function(){store([]);drawHist()};
+function refreshHist(){
+  if(!me){HIST=[];drawHist();return Promise.resolve()}
+  return fetch("/api/my/checks").then(function(r){return r.ok?r.json():[]}).then(function(a){HIST=a;drawHist()}).catch(function(){});
+}
+$("hist").onclick=function(e){
+  var b=e.target.closest("button");if(!b)return;var x=load()[b.dataset.i];if(!x)return;
+  fetch("/api/my/checks/"+encodeURIComponent(x.id)).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||"Could not open");return d})})
+  .then(function(c){current=c;prevOrig=null;$("idea").value=c.idea;$("tech").value=c.tech||"";view("result");show(c)})
+  .catch(function(err){alert(err.message)});
+};
+$("clear").onclick=function(){fetch("/api/my/checks",{method:"DELETE",headers:{"Content-Type":"application/json"}}).then(refreshHist)};
 
 /* progress */
 function progress(i){
@@ -340,18 +356,19 @@ function stopProgress(){timers.forEach(clearTimeout);timers=[]}
 function run(){
   var idea=$("idea").value.trim();
   var fe=$("formErr");if(idea.length<8){fe.textContent="Write at least one full sentence about your idea, then press Check my idea.";fe.hidden=false;$("idea").focus();return}fe.hidden=true;
+  if(!me){try{sessionStorage.setItem("ifx_draft",JSON.stringify({idea:$("idea").value,tech:$("tech").value,level:$("level").value,time:$("time").value,budget:$("budget").value,cur:$("cur").value}))}catch(e){}location.href="/login?next=/";return}
   btn.disabled=true;btn.textContent="Checking...";view("result");startProgress();
   fetch("/api/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({idea:idea,level:$("level").value,time:$("time").value,budget:$("budget").value,currency:$("cur").value,tech:$("tech").value})})
   .then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||"Request failed");return d})})
   .then(function(d){
     stopProgress();
-    current={idea:idea,level:$("level").value,time:$("time").value,cur:$("cur").value,budget:$("budget").value,tech:$("tech").value.trim(),r:d,at:Date.now()};
-    var h=load();h.unshift(current);store(h);drawHist();show(current);prevOrig=null;
+    current={id:d.checkId,idea:idea,level:$("level").value,time:$("time").value,cur:$("cur").value,budget:$("budget").value,tech:$("tech").value.trim(),r:d,at:Date.now(),submission:null};
+    refreshHist();show(current);prevOrig=null;
   })
   .catch(function(e){
     stopProgress();prevOrig=null;
     var m=String(e.message||e),tip="Wait a minute and try again.";
-    if(/quota/i.test(m))tip="You used up the free Gemini limit for now. The daily limit resets once a day. Wait, or create a new API key, then try again.";else if(/503|429|demand/i.test(m))tip="Google's AI is busy right now. Wait a minute and check again.";
+    if(/please log in/i.test(m))tip="Your login has ended. Please log in again, then check your idea.";else if(/quota/i.test(m))tip="You used up the free Gemini limit for now. The daily limit resets once a day. Wait, or create a new API key, then try again.";else if(/503|429|demand/i.test(m))tip="Google's AI is busy right now. Wait a minute and check again.";
     else if(/too many checks|daily limit/i.test(m))tip="This site limits how many checks each person can run. Please try again later.";else if(/API key|403|401/i.test(m))tip="Check the GEMINI_API_KEY in your .env file, then restart the server.";
     else if(/404/.test(m))tip="The AI model name is not available. Set GEMINI_MODEL in your .env file to a current model, then restart the server.";
     else if(/Failed to fetch|NetworkError/i.test(m))tip="The server is not running. Start it with npm start, then reload this page.";
@@ -421,7 +438,7 @@ function show(x){
   +techPanel(r)+budgetPanel(x)+'<section class="panel"><h2>Evidence we found</h2><p class="hint" style="margin-top:0">'+ghNote+' Search terms used: '+esc((r.queries||[]).join(", "))+'.</p>'
   +'<div class="tabs" role="tablist"><button class="tab" role="tab" aria-selected="true" data-t="p">Research papers ('+(ev.papers||[]).length+')</button><button class="tab" role="tab" aria-selected="false" data-t="g">GitHub projects ('+(ev.repos||[]).length+')</button></div>'
   +'<ul class="ev" id="evP">'+papers+'</ul><ul class="ev" id="evG" hidden>'+(repos||'<li class="empty">No GitHub projects to show.</li>')+'</ul></section>'
-  +'<div class="acts"><button class="btn2" id="copy">Copy report</button><button class="btn2" id="dl">Download report</button><button class="btn2" id="pr">Print or save as PDF</button></div></div>';
+  +sendPanel(x)+'<div class="acts"><button class="btn2" id="copy">Copy report</button><button class="btn2" id="dl">Download report</button><button class="btn2" id="pr">Print or save as PDF</button></div></div>';
   main.innerHTML=html;window.scrollTo(0,0);
 }
 main.addEventListener("click",function(e){
@@ -431,12 +448,36 @@ main.addEventListener("click",function(e){
   else if(t.id==="copy"&&current){var s=report(current),b=t;(navigator.clipboard?navigator.clipboard.writeText(s):Promise.reject()).then(function(){b.textContent="Copied"}).catch(function(){b.textContent="Copy failed, use Download"});setTimeout(function(){b.textContent="Copy report"},2000)}
   else if(t.id==="dl"&&current){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([report(current)],{type:"text/markdown"}));a.download="ideaforge-report.md";a.click()}
   else if(t.id==="pr")window.print();
+  else if(t.id==="sendTeacher"&&current)sendToTeacher(t);
 });
+function sendPanel(x){
+  if(!me||me.role!=="student"||!x.id)return "";
+  var s=x.submission;
+  if(s)return '<section class="panel" id="sendBox"><h2>Sent to your teacher</h2><p>Decision: <b>'+esc(s.status)+'</b></p>'+(s.comment?'<p>Teacher comment: '+esc(s.comment)+'</p>':'')+'</section>';
+  return '<section class="panel" id="sendBox"><h2>Send this idea to your teacher</h2><p class="hint" style="margin-top:0">You will send it as <b>'+esc(me.name)+'</b> ('+esc(me.roll)+(me.batch?', '+esc(me.batch):'')+'). Your teacher sees this report, your scores and any similar ideas in your batch.</p><button type="button" class="btn" id="sendTeacher" style="width:auto;padding:11px 20px">Send to teacher</button><p class="hint" id="sendMsg" role="status"></p></section>';
+}
+function sendToTeacher(b){
+  var msg=$("sendMsg");b.disabled=true;msg.textContent="Sending...";
+  fetch("/api/submit",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({checkId:current.id})})
+  .then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||"Could not send");return d})})
+  .then(function(d){current.submission=d.submission;$("sendBox").outerHTML=sendPanel(current);refreshHist()})
+  .catch(function(e){msg.textContent=e.message;b.disabled=false});
+}
 function report(x){
   var r=x.r,ev=r.evidence||{};
   return "# IdeaForge-X report\n\n**Idea:** "+x.idea+"\n**Student level:** "+x.level+", time: "+x.time+(x.tech?"\n**Planned technologies:** "+x.tech:"")+"\n\n## Verdict: "+(V[r.verdict]||V["CHANGE IT"]).t+"\n"+r.verdict_reason+"\n\n## Scores (estimates)\n- Originality: "+n(r.originality)+"%\n- Future scope: "+n(r.future_scope)+"%\n- Company interest: "+n(r.company_interest)+"%\n- Research value: "+n(r.research_value)+"%\n- Difficulty: "+r.difficulty+"\n\n## Why this is not unique\n"+(r.comparison||[]).map(function(c){return "- "+c.existing+": already "+c.what_it_does+"; missing in yours: "+c.gap}).join("\n")+"\n\n## How to become unique\n"+(r.uniqueness||[]).map(function(u){return "- "+u.part+": instead of "+u.common+", "+u.unique+" (effort: "+u.effort+")"}).join("\n")+"\n\n## Technologies\n"+(r.tech_stack||[]).map(function(k){return "- "+k.layer+": "+k.tool+" ("+(k.free?"free":"paid")+"), "+k.why}).join("\n")+"\n\n## Estimated budget\n"+(r.budget?money(r.budget.min,x.cur||"INR")+" to "+money(r.budget.max,x.cur||"INR")+"\n"+(r.budget.items||[]).map(function(i){return "- "+i.item+": "+money(i.cost,x.cur||"INR")}).join("\n")+"\n"+(r.budget_check==="verified"?"Prices checked online on "+r.price_date+".":"Estimates only.")+"\nCheapest way: "+(r.budget.free_option||""):"Not available")+"\n\n## Why it may not stand out\n"+(r.weaknesses||[]).map(function(w){return "- "+w}).join("\n")+"\n\n## Make it more unique\n"+(r.mutations||[]).map(function(m,i){return (i+1)+". **"+m.title+"** ("+n(m.new_originality)+"% original, "+m.difficulty+"): "+m.change}).join("\n")+"\n\n## Evidence\n"+(ev.papers||[]).map(function(p){return "- "+p.title+" ("+(p.year||"")+") "+p.url}).join("\n")+"\n"+(ev.repos||[]).map(function(p){return "- "+p.name+" "+p.url}).join("\n")+"\n";
 }
+function authUI(){
+  var nu=$("navUser");
+  if(!me)nu.innerHTML='<a href="/login">Log in</a> <a class="navbtn" href="/login?mode=signup">Sign up</a>';
+  else nu.innerHTML=(me.role==="teacher"?'<a href="/teacher">Teacher dashboard</a> ':'')+'<span class="navhi">Hi, '+esc(me.name.split(" ")[0])+'</span> <button type="button" class="navbtn" id="logout">Log out</button>';
+  var l=$("logout");if(l)l.onclick=function(){fetch("/api/auth/logout",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"}).then(function(){location.reload()})};
+  var hb=document.querySelector("details.past");if(hb&&me)hb.open=true;
+  $("loginNote").hidden=!!me;
+}
+try{var dr=JSON.parse(sessionStorage.getItem("ifx_draft")||"null");if(dr){["idea","tech","level","time","budget"].forEach(function(k){if(dr[k]!=null)$(k).value=dr[k]});if(dr.cur)$("cur").value=dr.cur;sessionStorage.removeItem("ifx_draft")}}catch(e){}
 drawHist();
+fetch("/api/me").then(function(r){return r.json()}).then(function(d){me=d.user;authUI();refreshHist()}).catch(function(){authUI()});
 })();
 </script>
 </body>

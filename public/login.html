@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Log in to IdeaForge-X</title>
+<style>
+:root{--ink:#14213d;--mu:#5b6b82;--paper:#eef2f7;--panel:#fff;--line:#d5dde8;--blue:#2457ff;--blue-soft:#e6ecff;--drop:#b83232;--drop-bg:#fbe6e6}
+@media (prefers-color-scheme:dark){:root{--ink:#e8edf6;--mu:#9aa9bf;--paper:#0f1623;--panel:#172033;--line:#2b3850;--blue:#7b9bff;--blue-soft:#1f2c4d;--drop:#ef7b7b;--drop-bg:#3b1a1a}}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--paper);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif;display:grid;grid-template-columns:1fr 1fr}
+@media (max-width:860px){body{grid-template-columns:1fr}.side{display:none}}
+.side{background:#0f1b3d;color:#fff;padding:48px;display:flex;flex-direction:column;justify-content:center}
+.brand{font:700 28px Georgia,serif;margin:0 0 28px}.brand b{color:#8fb0ff}
+.side h2{font:700 34px/1.15 Georgia,serif;margin:0 0 14px}
+.side p{color:#c3d0ea;max-width:30em;margin:0 0 18px}
+.side ul{list-style:none;margin:0;padding:0;display:grid;gap:10px;color:#e6ecf8}
+.side li{padding-left:26px;position:relative}
+.side li:before{content:"";position:absolute;left:0;top:7px;width:14px;height:14px;border-radius:50%;background:#2fbf86}
+.main{display:flex;align-items:center;justify-content:center;padding:28px 16px}
+.card{width:100%;max-width:420px}
+.mbrand{display:none;font:700 24px Georgia,serif;margin:0 0 16px}.mbrand b{color:var(--blue)}
+@media (max-width:860px){.mbrand{display:block}}
+h1{font:700 28px/1.2 Georgia,serif;margin:0 0 4px}
+.sub{color:var(--mu);margin:0 0 18px}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px;gap:4px;margin-bottom:14px}
+.seg button{font:inherit;font-weight:600;border:0;border-radius:7px;padding:9px;background:transparent;color:var(--mu);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--blue);color:#fff}
+.form{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
+label{display:block;font-weight:600;font-size:14px;margin:12px 0 5px}label:first-child{margin-top:0}
+input[type=text],input[type=email],input[type=password]{width:100%;font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:11px}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.hint{font-size:13px;color:var(--mu);margin:5px 0 0}
+.show{display:flex;align-items:center;gap:6px;font-size:14px;margin-top:8px;color:var(--mu)}
+.go{width:100%;margin-top:16px;font:inherit;font-weight:600;background:var(--blue);color:#fff;border:0;border-radius:8px;padding:12px;cursor:pointer}
+.go:disabled{opacity:.6;cursor:progress}
+.err{background:var(--drop-bg);color:var(--ink);border-left:4px solid var(--drop);border-radius:8px;padding:10px 12px;margin-top:14px;font-size:14px}
+.swap{text-align:center;margin:16px 0 0;color:var(--mu);font-size:15px}
+.swap button{font:inherit;font-weight:600;background:none;border:0;color:var(--blue);cursor:pointer;padding:0;text-decoration:underline}
+.back{display:inline-block;margin-top:18px;color:var(--mu);font-size:14px}
+.back a{color:var(--blue)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<aside class="side">
+  <p class="brand">Idea<b>Forge</b>-X</p>
+  <h2>Know if your idea is new before you build it.</h2>
+  <p>Students check ideas and send them to a teacher. Teachers review ideas, see similar ones, and give a decision.</p>
+  <ul>
+    <li>Your checks are saved on your account</li>
+    <li>Send an idea to your teacher in one click</li>
+    <li>See the teacher's decision and comment</li>
+  </ul>
+</aside>
+
+<main class="main">
+  <div class="card">
+    <p class="mbrand">Idea<b>Forge</b>-X</p>
+
+    <section id="already" hidden>
+      <h1>You are logged in</h1>
+      <p class="sub" id="who"></p>
+      <button class="go" id="cont" type="button">Continue</button>
+      <p class="swap"><button type="button" id="out">Log out and use another account</button></p>
+    </section>
+
+    <section id="auth">
+      <h1 id="title">Log in</h1>
+      <p class="sub" id="lead">Welcome back.</p>
+      <div class="seg" role="group" aria-label="I am a">
+        <button type="button" id="rS" aria-pressed="true">Student</button>
+        <button type="button" id="rT" aria-pressed="false">Teacher</button>
+      </div>
+      <form class="form" id="form" novalidate>
+        <div id="fName" hidden><label for="name">Full name</label><input id="name" type="text" autocomplete="name"></div>
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="email" inputmode="email">
+        <label for="pw">Password</label>
+        <input id="pw" type="password" autocomplete="current-password">
+        <p class="hint" id="pwHint" hidden>At least 8 characters.</p>
+        <label class="show"><input type="checkbox" id="showPw"> Show password</label>
+        <div id="fRoll" hidden>
+          <label for="roll">Roll number</label><input id="roll" type="text" autocomplete="off">
+          <label for="batch">Class or batch (optional)</label><input id="batch" type="text" placeholder="e.g. CSE 4th year A" autocomplete="off">
+          <p class="hint">Your teacher sees ideas grouped by batch, so use the same text as your classmates.</p>
+        </div>
+        <div id="fCode" hidden>
+          <label for="code">Teacher code</label><input id="code" type="password" autocomplete="off">
+          <p class="hint">Ask the person who runs this site for the teacher code.</p>
+        </div>
+        <button class="go" id="submit" type="submit">Log in</button>
+        <div class="err" id="err" role="alert" hidden></div>
+      </form>
+      <p class="swap" id="swapRow"><span id="swapText">New here?</span> <button type="button" id="swap">Create an account</button></p>
+    </section>
+    <a class="back" href="/">Back to home</a>
+  </div>
+</main>
+
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var role="student",mode="login",user=null;
+var q=new URLSearchParams(location.search),next=q.get("next")||"";
+if(!/^\/(?![\/\\])/.test(next))next="";
+
+function dest(u){return u.role==="teacher"?"/teacher":(next&&next.indexOf("/teacher")!==0?next:"/")}
+function paint(){
+  var signup=mode==="signup",teacher=role==="teacher";
+  $("rS").setAttribute("aria-pressed",!teacher);$("rT").setAttribute("aria-pressed",teacher);
+  $("title").textContent=signup?"Create your account":"Log in";
+  $("lead").textContent=signup?(teacher?"For teachers. You need the teacher code.":"For students. It takes a minute."):"Welcome back.";
+  $("fName").hidden=!signup;$("fRoll").hidden=!(signup&&!teacher);$("fCode").hidden=!(signup&&teacher);$("pwHint").hidden=!signup;
+  $("pw").autocomplete=signup?"new-password":"current-password";
+  $("submit").textContent=signup?"Create account":"Log in";
+  $("swapText").textContent=signup?"Already have an account?":"New here?";
+  $("swap").textContent=signup?"Log in":"Create an account";
+  $("err").hidden=true;
+}
+$("rS").onclick=function(){role="student";paint()};
+$("rT").onclick=function(){role="teacher";paint()};
+$("swap").onclick=function(){mode=mode==="login"?"signup":"login";paint()};
+$("showPw").onchange=function(){$("pw").type=this.checked?"text":"password"};
+function fail(m){var e=$("err");e.textContent=m;e.hidden=false}
+
+$("form").addEventListener("submit",function(ev){
+  ev.preventDefault();$("err").hidden=true;
+  var email=$("email").value.trim(),pw=$("pw").value;
+  if(!email||!pw){fail("Enter your email and password.");return}
+  var body={email:email,password:pw},url="/api/auth/login";
+  if(mode==="signup"){
+    url="/api/auth/register";body.role=role;body.name=$("name").value.trim();
+    if(!body.name){fail("Enter your name.");return}
+    if(pw.length<8){fail("Use a password with at least 8 characters.");return}
+    if(role==="student"){body.roll=$("roll").value.trim();body.batch=$("batch").value.trim();if(!body.roll){fail("Enter your roll number.");return}}
+    else{body.inviteCode=$("code").value;if(!body.inviteCode){fail("Enter the teacher code.");return}}
+  }
+  var b=$("submit"),label=b.textContent;b.disabled=true;b.textContent="Please wait...";
+  fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})
+  .then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||"Something went wrong");return d})})
+  .then(function(d){
+    if(mode==="login"&&role==="teacher"&&d.user.role!=="teacher"){fail("This account is a student account. Choose Student above.");b.disabled=false;b.textContent=label;return}
+    location.href=dest(d.user);
+  })
+  .catch(function(e){fail(/Failed to fetch|NetworkError/i.test(e.message)?"Cannot reach the server. Check that it is running.":e.message);b.disabled=false;b.textContent=label});
+});
+
+$("out").onclick=function(){fetch("/api/auth/logout",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"}).then(function(){location.reload()})};
+$("cont").onclick=function(){if(user)location.href=dest(user)};
+fetch("/api/me").then(function(r){return r.json()}).then(function(d){
+  if(d.user){user=d.user;$("auth").hidden=true;$("already").hidden=false;$("who").textContent=d.user.name+" ("+d.user.role+")"}
+}).catch(function(){});
+if(q.get("mode")==="signup"){mode="signup"}
+paint();
+})();
+</script>
+</body>
+</html>
