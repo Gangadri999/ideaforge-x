@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Teacher login | IdeaForge-X</title>
+<style>
+:root{--ink:#14213d;--mu:#5b6b82;--paper:#eef2f7;--panel:#fff;--line:#d5dde8;--blue:#0f766e;--blue-soft:#d9f3ef;--drop:#b83232;--drop-bg:#fbe6e6;--ok:#0f8a5f;--side:#0d3b3a}
+@media (prefers-color-scheme:dark){:root{--ink:#e8edf6;--mu:#9aa9bf;--paper:#0f1623;--panel:#172033;--line:#2b3850;--blue:#5eead4;--blue-soft:#1f2c4d;--drop:#ef7b7b;--drop-bg:#3b1a1a;--ok:#4cc38a}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;min-height:100vh;background:var(--paper);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif;display:grid;grid-template-columns:1fr 1fr}
+@media (max-width:860px){body{grid-template-columns:1fr}.side{display:none}}
+.side{background:var(--side);color:#fff;padding:48px;display:flex;flex-direction:column;justify-content:center}
+.brand{font:700 28px Georgia,serif;margin:0 0 28px}.brand b{color:#9fc0ff}
+.pill{display:inline-block;font-size:13px;font-weight:700;background:rgba(255,255,255,.15);border-radius:20px;padding:3px 12px;margin-bottom:14px;width:max-content}
+.side h2{font:700 34px/1.15 Georgia,serif;margin:0 0 14px}
+.side p{color:#d3def2;max-width:30em;margin:0 0 18px}
+.side ol{margin:0;padding-left:22px;display:grid;gap:10px;color:#eaf0fb}
+.main{display:flex;align-items:center;justify-content:center;padding:28px 16px}
+.card{width:100%;max-width:420px}
+.mbrand{display:none;font:700 24px Georgia,serif;margin:0 0 6px}.mbrand b{color:var(--blue)}
+@media (max-width:860px){.mbrand{display:block}}
+h1{font:700 28px/1.2 Georgia,serif;margin:0 0 4px}
+.sub{color:var(--mu);margin:0 0 18px}
+.form{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
+label{display:block;font-weight:600;font-size:14px;margin:12px 0 5px}label:first-child{margin-top:0}
+input[type=text],input[type=email],input[type=password]{width:100%;font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:11px}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.hint{font-size:13px;color:var(--mu);margin:6px 0 0}
+.show{display:flex;align-items:center;gap:6px;font-size:14px;margin-top:8px;color:var(--mu);font-weight:400}
+.go{width:100%;margin-top:16px;font:inherit;font-weight:600;background:var(--blue);color:#fff;border:0;border-radius:8px;padding:12px;cursor:pointer}
+.go:disabled{opacity:.6;cursor:progress}
+.err{background:var(--drop-bg);color:var(--ink);border-left:4px solid var(--drop);border-radius:8px;padding:10px 12px;margin-top:14px;font-size:14px}
+.note{background:var(--blue-soft);border-radius:8px;padding:10px 12px;margin:0 0 14px;font-size:14px}
+.links{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:18px;font-size:14px}
+.links a{color:var(--blue)}
+.linkbtn{font:inherit;background:none;border:0;color:var(--blue);text-decoration:underline;cursor:pointer;padding:0}
+</style>
+</head>
+<body>
+<aside class="side">
+  <p class="brand">Idea<b>Forge</b>-X</p>
+  <span class="pill">For teachers</span>
+  <h2>Review ideas. Guide your class.</h2>
+  <p>Log in with your email. The site admin made your account, so there is nothing to sign up for.</p>
+  <ol><li>Log in with your email and the temporary password from the admin</li><li>Set your own password</li><li>Create a class and add your students by roll number</li><li>Review the ideas they send and give decisions</li></ol>
+</aside>
+
+<main class="main">
+  <div class="card">
+    <p class="mbrand">Idea<b>Forge</b>-X</p>
+
+    <section id="already" hidden>
+      <h1>You are logged in</h1>
+      <p class="sub" id="who"></p>
+      <button class="go" id="cont" type="button">Continue</button>
+      <div class="links"><button type="button" class="linkbtn" id="out">Log out and use another account</button></div>
+    </section>
+
+    <section id="loginBox">
+      <h1>Teacher login</h1>
+      <p class="sub">Use your email and password.</p>
+      <form class="form" id="form" novalidate>
+        <label for="uid">Email</label>
+        <input id="uid" type="email" autocomplete="username" autocapitalize="none" spellcheck="false">
+        <label for="pw">Password</label>
+        <input id="pw" type="password" autocomplete="current-password">
+        <label class="show"><input type="checkbox" id="showPw"> Show password</label>
+        <button class="go" id="submit" type="submit">Log in</button>
+        <div class="err" id="err" role="alert" hidden></div>
+      </form>
+      <div class="links"><span>Forgot your password? Ask the site admin to reset it.</span><a href="/student">Student login</a></div>
+    </section>
+
+    <section id="changeBox" hidden>
+      <h1>Set your own password</h1>
+      <p class="sub">This is your first login. Choose a new password to continue.</p>
+      <form class="form" id="cform" novalidate>
+        <label for="cur">Temporary password</label>
+        <input id="cur" type="password" autocomplete="current-password">
+        <label for="np">New password</label>
+        <input id="np" type="password" autocomplete="new-password">
+        <p class="hint">At least 8 characters.</p>
+        <label for="np2">Type the new password again</label>
+        <input id="np2" type="password" autocomplete="new-password">
+        <button class="go" id="csubmit" type="submit">Save and continue</button>
+        <div class="err" id="cerr" role="alert" hidden></div>
+      </form>
+    </section>
+    <div class="links"><a href="/">Back to home</a></div>
+  </div>
+</main>
+
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var PORTAL="teacher",DEST="/teacher",user=null;
+function fail(id,m){var e=$(id);e.textContent=m;e.hidden=false}
+function net(e){return /Failed to fetch|NetworkError/i.test(e.message)?"Cannot reach the server. Check that it is running.":e.message}
+var JH={"Content-Type":"application/json"};
+function post(u,b){return fetch(u,{method:"POST",headers:JH,body:JSON.stringify(b||{})}).then(function(r){return r.json().then(function(d){if(!r.ok){var e=new Error(d.error||"Something went wrong");e.data=d;throw e}return d})})}
+function toChange(pw){$("loginBox").hidden=true;$("already").hidden=true;$("changeBox").hidden=false;if(pw)$("cur").value=pw;$((pw?"np":"cur")).focus()}
+
+$("showPw").onchange=function(){$("pw").type=this.checked?"text":"password"};
+$("form").addEventListener("submit",function(ev){
+  ev.preventDefault();$("err").hidden=true;
+  var id=$("uid").value.trim(),pw=$("pw").value;
+  if(!id||!pw){fail("err","Enter your email and password.");return}
+  var b=$("submit");b.disabled=true;b.textContent="Please wait...";
+  post("/api/auth/login",{id:id,password:pw,portal:PORTAL}).then(function(d){
+    user=d.user;if(d.mustChange){toChange(pw);return}
+    location.href=DEST;
+  }).catch(function(e){fail("err",net(e))}).then(function(){b.disabled=false;b.textContent="Log in"});
+});
+$("cform").addEventListener("submit",function(ev){
+  ev.preventDefault();$("cerr").hidden=true;
+  var cur=$("cur").value,n1=$("np").value,n2=$("np2").value;
+  if(n1.length<8){fail("cerr","Use a password with at least 8 characters.");return}
+  if(n1!==n2){fail("cerr","The two new passwords are not the same.");return}
+  var b=$("csubmit");b.disabled=true;
+  post("/api/auth/change-password",{current:cur,newPassword:n1}).then(function(){location.href=DEST}).catch(function(e){fail("cerr",net(e));b.disabled=false});
+});
+$("out").onclick=function(){post("/api/auth/logout").then(function(){location.reload()})};
+$("cont").onclick=function(){location.href=DEST};
+fetch("/api/me").then(function(r){return r.json()}).then(function(d){
+  if(!d.user)return;
+  user=d.user;
+  if(d.user.role!==PORTAL){$("who").textContent="You are logged in as "+d.user.name+" ("+d.user.role+"). To use this login, log out first.";$("loginBox").hidden=true;$("already").hidden=false;$("cont").hidden=true;return}
+  if(d.user.mustChange){toChange("");return}
+  $("loginBox").hidden=true;$("already").hidden=false;$("who").textContent=d.user.name;
+}).catch(function(){});
+})();
+</script>
+</body>
+</html>

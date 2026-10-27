@@ -10,37 +10,53 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
 a{color:var(--blue)}
-.top{background:#0f1b3d;color:#fff;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 24px}
-.brand{font:700 22px Georgia,serif}.brand b{color:#8fb0ff}.brand small{font:14px "Segoe UI",sans-serif;color:#c3d0ea;margin-left:8px}
-.top a{color:#c3d0ea}
+[hidden]{display:none!important}
+.top{background:#0f1b3d;color:#fff;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 24px}
+.brand{font:700 22px Georgia,serif}.brand b{color:#8fb0ff}
+.top a{color:#c3d0ea;margin-right:12px}
+.top .who{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.top button{font:inherit;font-weight:600;border-radius:8px;cursor:pointer;padding:7px 12px;background:transparent;color:#fff;border:1px solid #8fb0ff}
+.tabs{background:#0f1b3d;padding:0 24px;display:flex;gap:4px;flex-wrap:wrap}
+.tabs button{font:inherit;font-weight:600;background:none;border:0;border-bottom:3px solid transparent;color:#c3d0ea;padding:10px 14px;cursor:pointer}
+.tabs button[aria-selected="true"]{color:#fff;border-color:#8fb0ff}
+.badge{display:inline-block;min-width:20px;text-align:center;background:#d9961e;color:#14213d;border-radius:10px;font-size:12px;padding:0 6px;margin-left:6px}
 main{max-width:1180px;margin:0 auto;padding:20px 16px 56px}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
-.narrow{max-width:380px;margin:40px auto}
+.narrow{max-width:520px;margin:40px auto;text-align:center}
 h1,h2{font-family:Georgia,serif;margin:0 0 8px}h2{font-size:20px}h3{font-size:15px;margin:18px 0 6px}
 label{display:block;font-weight:600;font-size:14px;margin:10px 0 4px}
 input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:9px}
 textarea{min-height:70px}
 :focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 button{font:inherit;font-weight:600;border-radius:8px;cursor:pointer;padding:9px 14px;border:1px solid var(--blue);background:var(--panel);color:var(--blue)}
-button.btn{background:var(--blue);color:#fff;width:100%;margin-top:12px}
-.top button{background:transparent;color:#fff;border-color:#8fb0ff}
-.err{color:var(--drop);font-size:14px}
+button.btn{background:var(--blue);color:#fff;margin-top:12px}
+.sm{font-size:13px;color:var(--mu)}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
 .stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
 .stat b{display:block;font:700 28px Georgia,serif}.stat span{color:var(--mu);font-size:14px}
 .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:14px}
-.filters>div{flex:1;min-width:140px}.filters label{margin-top:0}
-.chk{display:flex;align-items:center;gap:6px;font-weight:600;font-size:14px;padding-bottom:10px}.chk input{width:auto}
+.filters>div{flex:1;min-width:130px}.filters label{margin-top:0}.filters input,.filters select{height:42px}
+.chk{display:flex;align-items:center;gap:6px;font-weight:600;font-size:14px;padding-bottom:10px}.chk input{width:auto;height:auto}
 .tbl{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px}
 table{border-collapse:collapse;width:100%;min-width:820px;font-size:14px}
 th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
 th{background:var(--paper);font-size:13px;color:var(--mu)}
-tbody tr{cursor:pointer}tbody tr:hover{background:var(--blue-soft)}
-tbody tr:focus-visible{outline-offset:-3px}
+tbody tr.go{cursor:pointer}tbody tr.go:hover{background:var(--blue-soft)}
 .tag{display:inline-block;font-size:12px;font-weight:700;border-radius:20px;padding:2px 9px;white-space:nowrap}
-.t-build{background:var(--build-bg);color:var(--build)}.t-change{background:var(--change-bg);color:var(--change)}.t-drop{background:var(--drop-bg);color:var(--drop)}.t-gray{background:var(--paper);color:var(--mu);border:1px solid var(--line)}
+.t-build{background:var(--build-bg);color:var(--build)}.t-change{background:var(--change-bg);color:var(--change)}.t-drop{background:var(--drop-bg);color:var(--drop)}.t-gray{background:var(--paper);color:var(--mu);border:1px solid var(--line)}.t-blue{background:var(--blue-soft);color:var(--blue)}
 .flag{color:var(--drop);font-weight:600}
-.empty{color:var(--mu);padding:18px}
+.empty{color:var(--mu);padding:18px;margin:0}
+.warn{background:var(--change-bg);color:var(--ink);border-left:4px solid var(--change);padding:10px 12px;border-radius:8px;margin-bottom:14px;font-size:14px}
+.start{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+@media (max-width:700px){.start{grid-template-columns:1fr}}
+.start div{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.start b{display:block;margin-bottom:2px}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;margin-top:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+.code{font:700 30px/1.1 Consolas,"Courier New",monospace;letter-spacing:.14em;background:var(--blue-soft);color:var(--blue);border-radius:8px;padding:10px 12px;margin:10px 0;text-align:center}
+.crow{display:flex;gap:8px;flex-wrap:wrap}.crow button{padding:7px 11px;font-size:14px}
+.nw{white-space:nowrap}
+.newc{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.newc>div{flex:1;min-width:200px}.newc button{margin:0}
 dialog{width:min(860px,94vw);max-height:90vh;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);padding:0}
 dialog::backdrop{background:rgba(0,0,0,.5)}
 .dh{display:flex;justify-content:space-between;gap:10px;align-items:start;padding:16px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel)}
@@ -48,31 +64,53 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 .vbox{border-radius:10px;padding:14px;margin:12px 0}.vbox b{font:700 22px Georgia,serif;display:block}
 .sc{display:grid;grid-template-columns:130px 1fr 50px;gap:10px;align-items:center;margin:6px 0;font-size:14px}
 .bar{height:8px;background:var(--paper);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;background:var(--blue)}
-.sm{font-size:13px;color:var(--mu)}
 .simbox{background:var(--drop-bg);border-radius:8px;padding:10px 12px;margin:8px 0}
 .row2{display:grid;grid-template-columns:1fr 2fr;gap:12px}
+.rounds{list-style:none;margin:0;padding:0;border-left:3px solid var(--line)}
+.rounds li{padding:4px 0 10px 14px;position:relative}
+.rounds li:before{content:"";position:absolute;left:-8px;top:9px;width:13px;height:13px;border-radius:50%;background:var(--panel);border:3px solid var(--blue)}
+.rounds li.now:before{background:var(--blue)}
 @media (max-width:600px){.row2{grid-template-columns:1fr}.sc{grid-template-columns:1fr 1fr}.sc .bar{grid-column:1/3}}
-.warn{background:var(--change-bg);color:var(--ink);border-left:4px solid var(--change);padding:10px 12px;border-radius:8px;margin-bottom:14px;font-size:14px}
-.top a{margin-right:12px}
-.filters input,.filters select{height:42px}
-.filters>div{min-width:130px}
-#del{color:var(--drop);border-color:var(--drop)}
+.creds{background:var(--change-bg);border-radius:10px;padding:14px;margin-top:14px}
+.creds table{min-width:0;margin:8px 0;background:var(--panel);border-radius:8px}
+.creds td.pw{font:700 16px Consolas,"Courier New",monospace;letter-spacing:.06em}
+@media print{body *{visibility:hidden}.creds,.creds *{visibility:visible}.creds{position:absolute;left:0;top:0;width:100%;background:#fff;color:#000}.creds button{display:none}}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+@media (max-width:760px){.two{grid-template-columns:1fr}}
+.hbar{display:grid;grid-template-columns:96px 1fr 34px;gap:8px;align-items:center;font-size:14px;margin:6px 0}
+.hbar .bar{height:12px}
+.topic{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.topic h3{margin:0 0 2px;font:700 18px Georgia,serif}
+.topic ul{margin:8px 0;padding-left:18px;font-size:14px}
+.tin{min-width:100px;padding:6px 8px;height:34px}
 </style>
 </head>
 <body>
 <header class="top">
-  <span class="brand">Idea<b>Forge</b>-X<small>Teacher view</small></span>
-  <span><a href="/">Student page</a> <span id="tname" style="margin-right:6px"></span> <button type="button" id="logout" hidden>Log out</button></span>
+  <span class="brand">Idea<b>Forge</b>-X <span class="sm" style="color:#c3d0ea;font-family:'Segoe UI',sans-serif;font-size:14px">Teacher view</span></span>
+  <span class="who"><a href="/">Student page</a><span id="tname"></span><button type="button" id="logout" hidden>Log out</button></span>
 </header>
+<nav class="tabs" id="tabs" aria-label="Sections" hidden>
+  <button type="button" data-v="ideas" aria-selected="true">Ideas</button>
+  <button type="button" data-v="classes" aria-selected="false">Classes</button>
+  <button type="button" data-v="topics" aria-selected="false">Topics</button>
+  <button type="button" data-v="teachers" aria-selected="false" id="tabT" hidden>Teachers</button>
+</nav>
+
 <main>
-  <section id="dash" hidden>
-    <div class="warn" id="warn" hidden><b>Heads up:</b> this site is saving to a temporary file, so accounts and ideas will be lost when it restarts. Connect Firebase to keep them. Download the CSV often until then.</div>
+  <section id="viewIdeas" hidden>
+    <div class="warn" id="warn" hidden><b>Heads up:</b> this site is saving to a temporary file, so accounts and ideas will be lost when it restarts. Connect Firebase to keep them.</div>
+    <div class="start" id="start" hidden>
+      <div><b>1. Create a class</b><span class="sm">Open the Classes tab and name your class.</span></div>
+      <div><b>2. Add your students</b><span class="sm">Type roll numbers and names. Each student gets a login ID and a temporary password.</span></div>
+      <div><b>3. Review ideas here</b><span class="sm">Ideas they send appear in this list with a report.</span></div>
+    </div>
     <div class="stats" id="stats"></div>
     <div class="filters">
       <div><label for="q">Search</label><input id="q" type="text" placeholder="Name, roll number or idea"></div>
       <div><label for="fv">Verdict</label><select id="fv"><option value="">All</option><option>BUILD</option><option>CHANGE IT</option><option>DON'T BUILD</option></select></div>
       <div><label for="fs">Decision</label><select id="fs"><option value="">All</option><option>Pending</option><option>Approved</option><option>Needs change</option><option>Rejected</option></select></div>
-      <div><label for="fb">Batch</label><select id="fb"><option value="">All</option></select></div>
+      <div><label for="fb">Class</label><select id="fb"><option value="">All</option></select></div>
       <div><label for="so">Sort by</label><select id="so"><option value="new">Newest first</option><option value="low">Lowest originality</option><option value="high">Highest originality</option><option value="flag">Similar ideas first</option></select></div>
       <label class="chk"><input type="checkbox" id="ff"> Only similar ideas</label>
       <button type="button" id="exp">Download CSV</button>
@@ -81,10 +119,55 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
     <div class="tbl"><table>
       <thead><tr><th>Student</th><th>Idea</th><th>Originality</th><th>Verdict</th><th>Decision</th><th>Similar ideas</th><th>Sent</th></tr></thead>
       <tbody id="rows"></tbody>
-    </table><p class="empty" id="empty" hidden>No submitted ideas match.</p></div>
-    <p class="sm">Similar ideas are found by comparing the words in each idea within the same batch. It is a quick pointer, not proof, so open the idea to judge.</p>
+    </table><p class="empty" id="empty" hidden>No ideas match.</p></div>
+    <p class="sm">Similar ideas are found by comparing the words in each idea within the same class. It is a quick pointer, not proof, so open the idea to judge.</p>
+  </section>
+
+  <section id="viewClasses" hidden>
+    <div class="panel">
+      <h2>Create a class</h2>
+      <p class="sm" style="margin-top:0">Add your students to a class by roll number. You only see ideas from your own classes.</p>
+      <div class="newc"><div><label for="cname">Class name</label><input id="cname" type="text" maxlength="60" placeholder="e.g. CSE 4th year A"></div><button type="button" class="btn" id="cmake">Create class</button></div>
+      <p class="sm" id="cmsg" role="status" style="margin-bottom:0"></p>
+    </div>
+    <div class="cgrid" id="cgrid"></div>
+    <p class="empty" id="cempty" hidden>No classes yet. Create one above, then add your students.</p>
+  </section>
+
+  <section id="viewTopics" hidden>
+    <div class="panel" style="margin-bottom:14px"><h2>Topics</h2><p class="sm" style="margin:0">Ideas are grouped by the main words they share, and a team counts once. It is a quick way to spot crowded topics early. It compares words, not meaning, so open the ideas to judge.</p></div>
+    <div class="stats" id="tsummary"></div>
+    <div class="two" id="tcharts"></div>
+    <div id="ttopics"></div>
+  </section>
+
+  <section id="viewTeachers" hidden>
+    <div class="panel">
+      <h2>Add a teacher</h2>
+      <p class="sm" style="margin-top:0">The teacher gets a login ID (their email) and a temporary password. They set their own password the first time they log in.</p>
+      <div class="newc"><div><label for="tn">Name</label><input id="tn" type="text" maxlength="80"></div><div><label for="te">Email</label><input id="te" type="text" maxlength="120"></div><button type="button" class="btn" id="tmake">Create teacher</button></div>
+      <p class="sm" id="tmsg" role="status" style="margin-bottom:0"></p>
+    </div>
+    <div class="panel creds" id="tcreds" hidden></div>
+    <div class="tbl" style="margin-top:14px"><table style="min-width:700px">
+      <thead><tr><th>Name</th><th>Login ID (email)</th><th>Status</th><th>First login</th><th>Classes</th><th></th></tr></thead>
+      <tbody id="trows"></tbody>
+    </table></div>
   </section>
 </main>
+
+<dialog id="cdlg" aria-labelledby="cdt">
+  <div class="dh"><div><h2 id="cdt" style="margin:0"></h2><span class="sm">Students log in at <b id="curl"></b></span></div><button type="button" id="cclose">Close</button></div>
+  <div class="db">
+    <h3>Add students</h3>
+    <label for="ctext">One student per line: roll number, name, and a team name if you want. You can paste from Excel.</label>
+    <textarea id="ctext" placeholder="21A01, Ravi Kumar, Team 1&#10;21A02, Sita Devi, Team 1&#10;21A03, Kiran, Team 2" style="min-height:110px"></textarea>
+    <button type="button" class="btn" id="cadd">Create student accounts</button> <span class="sm" id="cmsg2" role="status"></span>
+    <div id="cres" class="creds" hidden></div>
+    <h3>Students in this class</h3>
+    <div class="tbl"><table style="min-width:660px"><thead><tr><th>Roll number</th><th>Name</th><th>Team</th><th>First login</th><th>Ideas sent</th><th></th></tr></thead><tbody id="croster"></tbody></table><p class="empty" id="cr0" hidden>No students yet.</p></div>
+  </div>
+</dialog>
 
 <dialog id="dlg" aria-labelledby="dt">
   <div class="dh"><div id="dt"></div><button type="button" id="close">Close</button></div>
@@ -94,7 +177,7 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 <script>
 (function(){
 var $=function(i){return document.getElementById(i)};
-var items=[],openId=null;
+var me=null,items=[],classes=[],openId=null;
 var VT={"BUILD":["t-build","Build it"],"CHANGE IT":["t-change","Change it first"],"DON'T BUILD":["t-drop","Don't build"]};
 var ST={"Pending":"t-gray","Approved":"t-build","Needs change":"t-change","Rejected":"t-drop"};
 function esc(s){var d=document.createElement("div");d.textContent=s==null?"":String(s);return d.innerHTML}
@@ -102,28 +185,37 @@ function url(u){return /^https?:\/\//i.test(u||"")?u:""}
 function n(v){v=Number(v);return isNaN(v)?0:Math.max(0,Math.min(100,Math.round(v)))}
 function date(t){return new Date(t).toLocaleString([], {day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}
 function tag(cls,txt){return '<span class="tag '+cls+'">'+esc(txt)+'</span>'}
+var JSONH={"Content-Type":"application/json"};
 
 function api(path,opt){
-  opt=opt||{};opt.headers=Object.assign({"Content-Type":"application/json"},opt.headers||{});
+  opt=opt||{};opt.headers=Object.assign({},JSONH,opt.headers||{});
   return fetch(path,opt).then(function(r){return r.json().then(function(d){
-    if(r.status===401||r.status===403){location.href="/login?next=/teacher";throw new Error(d.error||"Please log in.")}
+    if(r.status===401){location.href="/teacher/login";throw new Error(d.error||"Please log in.")}
+    if(r.status===403&&d.mustChange){location.href="/teacher/login";throw new Error(d.error)}
     if(!r.ok)throw new Error(d.error||"Something went wrong");return d})});
 }
-function logout(){fetch("/api/auth/logout",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"}).then(function(){location.href="/login"})}
-function load(){
-  api("/api/teacher/submissions").then(function(d){items=d;$("dash").hidden=false;fillBatches();draw()}).catch(function(e){alert(e.message)});
+function logout(){fetch("/api/auth/logout",{method:"POST",headers:JSONH,body:"{}"}).then(function(){location.href="/login"})}
+
+/* ---------- views ---------- */
+function view(v){
+  ["ideas","classes","topics","teachers"].forEach(function(k){$("view"+k[0].toUpperCase()+k.slice(1)).hidden=k!==v});
+  document.querySelectorAll("#tabs button").forEach(function(b){b.setAttribute("aria-selected",b.dataset.v===v)});
+  if(v==="classes")loadClasses();if(v==="topics")loadTopics();if(v==="teachers")loadTeachers();
 }
-function fillBatches(){
-  var cur=$("fb").value,seen={};items.forEach(function(s){if(s.batch)seen[s.batch]=1});
-  $("fb").innerHTML='<option value="">All</option>'+Object.keys(seen).sort().map(function(b){return '<option>'+esc(b)+'</option>'}).join("");
-  $("fb").value=seen[cur]?cur:"";
+$("tabs").onclick=function(e){var b=e.target.closest("button");if(b)view(b.dataset.v)};
+/* ---------- ideas ---------- */
+function loadAll(){return Promise.all([api("/api/teacher/classes"),api("/api/teacher/submissions")]).then(function(r){classes=r[0];items=r[1];fillClasses();draw()}).catch(function(e){alert(e.message)})}
+function fillClasses(){
+  var cur=$("fb").value;
+  $("fb").innerHTML='<option value="">All</option>'+classes.map(function(c){return '<option value="'+esc(c.id)+'">'+esc(c.name)+'</option>'}).join("");
+  $("fb").value=classes.some(function(c){return c.id===cur})?cur:"";
 }
 function filtered(){
   var q=$("q").value.trim().toLowerCase(),v=$("fv").value,s=$("fs").value,b=$("fb").value,f=$("ff").checked;
   var a=items.filter(function(x){
-    if(v&&x.verdict!==v)return false;if(s&&x.status!==s)return false;if(b&&x.batch!==b)return false;
+    if(v&&x.verdict!==v)return false;if(s&&x.status!==s)return false;if(b&&x.classId!==b)return false;
     if(f&&!(x.similar&&x.similar.length))return false;
-    if(q&&(x.name+" "+x.roll+" "+x.idea).toLowerCase().indexOf(q)<0)return false;return true});
+    if(q&&(x.name+" "+x.roll+" "+x.idea+" "+(x.team||"")+" "+(x.members||[]).map(function(m){return m.name}).join(" ")).toLowerCase().indexOf(q)<0)return false;return true});
   var so=$("so").value;
   if(so==="low")a.sort(function(x,y){return x.originality-y.originality});
   else if(so==="high")a.sort(function(x,y){return y.originality-x.originality});
@@ -133,12 +225,16 @@ function filtered(){
 function draw(){
   var c={b:0,c:0,d:0,f:0,p:0};
   items.forEach(function(x){if(x.verdict==="BUILD")c.b++;else if(x.verdict==="CHANGE IT")c.c++;else c.d++;if(x.similar&&x.similar.length)c.f++;if(x.status==="Pending")c.p++});
+  $("start").hidden=classes.length>0;
   $("stats").innerHTML=[["Ideas sent",items.length],["Waiting for decision",c.p],["Build it",c.b],["Change first",c.c],["Don't build",c.d],["With similar ideas",c.f]].map(function(k){return '<div class="stat"><b>'+k[1]+'</b><span>'+k[0]+'</span></div>'}).join("");
   var a=filtered();$("empty").hidden=a.length>0;
+  $("empty").textContent=items.length?"No ideas match.":"No ideas have been sent yet. Share your class code with students.";
   $("rows").innerHTML=a.map(function(x){
     var v=VT[x.verdict]||VT["CHANGE IT"];
     var sim=(x.similar||[]).length?'<span class="flag">'+x.similar.map(function(m){return esc(m.name)+" ("+m.pct+"%)"}).join(", ")+'</span>':'<span class="sm">None</span>';
-    return '<tr tabindex="0" data-id="'+esc(x.id)+'"><td><b>'+esc(x.name)+'</b><br><span class="sm">'+esc(x.roll)+(x.batch?", "+esc(x.batch):"")+'</span></td><td>'+esc(x.idea)+'</td><td>'+n(x.originality)+'%</td><td>'+tag(v[0],v[1])+'</td><td>'+tag(ST[x.status]||"t-gray",x.status)+'</td><td>'+sim+'</td><td class="sm">'+date(x.at)+'</td></tr>'}).join("");
+    var score=x.round>1&&x.before!=null?n(x.before)+'% to <b>'+n(x.originality)+'%</b>':n(x.originality)+'%';
+    var who=x.team?'<b>'+esc(x.team)+'</b><br><span class="sm">'+esc((x.members||[]).map(function(m){return m.name}).join(", "))+(x.batch?". "+esc(x.batch):"")+'</span>':'<b>'+esc(x.name)+'</b><br><span class="sm">'+esc(x.roll)+(x.batch?", "+esc(x.batch):"")+'</span>';
+    return '<tr class="go" tabindex="0" data-id="'+esc(x.id)+'"><td>'+who+'</td><td>'+esc(x.idea)+(x.round>1?' '+tag("t-blue","Round "+x.round):"")+'</td><td class="nw">'+score+'</td><td>'+tag(v[0],v[1])+'</td><td>'+tag(ST[x.status]||"t-gray",x.status)+'</td><td>'+sim+'</td><td class="sm">'+date(x.at)+'</td></tr>'}).join("");
 }
 $("rows").addEventListener("click",function(e){var r=e.target.closest("tr");if(r)show(r.dataset.id)});
 $("rows").addEventListener("keydown",function(e){if(e.key==="Enter"){var r=e.target.closest("tr");if(r)show(r.dataset.id)}});
@@ -156,18 +252,23 @@ function show(id){
   api("/api/teacher/submissions/"+encodeURIComponent(id)).then(function(s){
     var r=s.data||{},ev=r.evidence||{},v=VT[s.verdict]||VT["CHANGE IT"];
     var vc=s.verdict==="BUILD"?"t-build":s.verdict==="CHANGE IT"?"t-change":"t-drop";
-    $("dt").innerHTML='<h2 style="margin:0">'+esc(s.name)+'</h2><span class="sm">'+esc(s.roll)+(s.batch?", "+esc(s.batch):"")+'. '+esc(s.email)+'. Sent '+date(s.at)+'</span>';
-    var h='<h3>Idea</h3><p style="margin:0"><b>'+esc(s.idea)+'</b></p><p class="sm" style="margin:2px 0 0">'+esc(s.level||"")+(s.time?", "+esc(s.time):"")+(s.tech?". Technologies: "+esc(s.tech):"")+'</p>';
+    $("dt").innerHTML=s.team?'<h2 style="margin:0">'+esc(s.team)+'</h2><span class="sm">'+esc((s.members||[]).map(function(m){return m.name+" ("+m.roll+")"}).join(", "))+(s.batch?". "+esc(s.batch):"")+'. Sent by '+esc(s.sentBy||s.name)+', '+date(s.at)+'</span>':'<h2 style="margin:0">'+esc(s.name)+'</h2><span class="sm">'+esc(s.roll)+(s.batch?", "+esc(s.batch):"")+'. '+esc(s.email)+'. Sent '+date(s.at)+'</span>';
+    var h='<h3>Idea'+(s.round>1?' (round '+s.round+')':'')+'</h3><p style="margin:0"><b>'+esc(s.idea)+'</b></p><p class="sm" style="margin:2px 0 0">'+esc(s.level||"")+(s.time?", "+esc(s.time):"")+(s.tech?". Technologies: "+esc(s.tech):"")+'</p>';
+    if((s.history||[]).length){
+      h+='<h3>Progress across rounds</h3><ul class="rounds">'+s.history.map(function(k){var kv=VT[k.verdict]||VT["CHANGE IT"];return '<li><b>Round '+k.round+':</b> '+n(k.originality)+'% '+tag(kv[0],kv[1])+' '+tag(ST[k.status]||"t-gray",k.status)+'<br><span class="sm">'+esc(k.idea)+(k.comment?'. Your comment: '+esc(k.comment):'')+'</span></li>'}).join("")+'<li class="now"><b>Round '+s.round+' (now):</b> '+n(s.originality)+'% '+tag(v[0],v[1])+'<br><span class="sm">'+esc(s.idea)+'</span></li></ul>';
+    }
     h+='<div class="vbox '+vc+'"><b>'+esc(v[1])+'</b>'+esc(r.verdict_reason||"")+'</div>';
-    if((s.similar||[]).length)h+='<div class="simbox"><b>Similar ideas in the same batch</b><ul style="margin:6px 0 0;padding-left:18px">'+s.similar.map(function(m){return '<li>'+esc(m.name)+' ('+esc(m.roll)+'), '+m.pct+'% of words match: '+esc(m.idea)+'</li>'}).join("")+'</ul></div>';
+    if((s.similar||[]).length)h+='<div class="simbox"><b>Similar ideas in the same class</b><ul style="margin:6px 0 0;padding-left:18px">'+s.similar.map(function(m){return '<li>'+esc(m.name)+' ('+esc(m.roll)+'), '+m.pct+'% of words match: '+esc(m.idea)+'</li>'}).join("")+'</ul></div>';
     h+='<h3>Scores</h3>'+bar("Originality",r.originality)+bar("Future scope",r.future_scope)+bar("Company interest",r.company_interest)+bar("Research value",r.research_value)+'<p class="sm">Difficulty: '+esc(r.difficulty||"")+'. Scores are estimates.</p>';
     if((r.weaknesses||[]).length)h+='<h3>Why it may not stand out</h3><ul style="margin:0;padding-left:18px">'+r.weaknesses.map(function(w){return '<li>'+esc(w)+'</li>'}).join("")+'</ul>';
-    if((r.comparison||[]).length)h+='<h3>Compared with what already exists</h3><div class="tbl"><table style="min-width:600px"><thead><tr><th>Already exists</th><th>What it does</th><th>Shared</th><th>Missing in this idea</th></tr></thead><tbody>'+r.comparison.map(function(k){var u=linkFor(k.existing,ev);return '<tr style="cursor:default"><td>'+(u?'<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(k.existing)+'</a>':esc(k.existing))+'</td><td>'+esc(k.what_it_does)+'</td><td>'+esc(k.overlap)+'</td><td>'+esc(k.gap)+'</td></tr>'}).join("")+'</tbody></table></div>';
+    if((r.comparison||[]).length)h+='<h3>Compared with what already exists</h3><div class="tbl"><table style="min-width:600px"><thead><tr><th>Already exists</th><th>What it does</th><th>Shared</th><th>Missing in this idea</th></tr></thead><tbody>'+r.comparison.map(function(k){var u=linkFor(k.existing,ev);return '<tr><td>'+(u?'<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(k.existing)+'</a>':esc(k.existing))+'</td><td>'+esc(k.what_it_does)+'</td><td>'+esc(k.overlap)+'</td><td>'+esc(k.gap)+'</td></tr>'}).join("")+'</tbody></table></div>';
     if((r.uniqueness||[]).length)h+='<h3>How the student could make it unique</h3><ul style="margin:0;padding-left:18px">'+r.uniqueness.map(function(k){return '<li><b>'+esc(k.part)+':</b> '+esc(k.unique)+' <span class="sm">(effort: '+esc(k.effort)+')</span></li>'}).join("")+'</ul>';
     var links=(ev.papers||[]).slice(0,5).map(function(p){return [p.title,url(p.url)]}).concat((ev.repos||[]).slice(0,5).map(function(p){return [p.name,url(p.url)]})).filter(function(l){return l[1]});
     if(links.length)h+='<h3>Evidence links</h3><ul style="margin:0;padding-left:18px">'+links.map(function(l){return '<li><a href="'+esc(l[1])+'" target="_blank" rel="noopener">'+esc(l[0])+'</a></li>'}).join("")+'</ul>';
+    if(s.status==="Approved")h+='<p><a href="/letter?id='+encodeURIComponent(s.id)+'" target="_blank" rel="noopener">Open the approval letter (print or save as PDF)</a></p>';
     h+='<h3>Your decision</h3><div class="row2"><div><label for="ds">Decision</label><select id="ds">'+["Pending","Approved","Needs change","Rejected"].map(function(o){return '<option'+(o===s.status?" selected":"")+'>'+o+'</option>'}).join("")+'</select></div><div><label for="dc">Comment for the student (optional)</label><textarea id="dc" maxlength="500">'+esc(s.comment||"")+'</textarea></div></div>'
-      +'<div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap"><button type="button" class="btn" id="save" style="width:auto">Save decision</button><button type="button" id="del">Delete this submission</button><span class="sm" id="dm" role="status"></span></div>';
+      +'<p class="sm">Choose <b>Needs change</b> to let the student send an improved version. You will see the score of each round here.</p>'
+      +'<div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:center"><button type="button" class="btn" id="save" style="margin:0">Save decision</button><button type="button" id="del" style="color:var(--drop);border-color:var(--drop)">Delete this idea</button><span class="sm" id="dm" role="status"></span></div>';
     $("dbody").innerHTML=h;
     if(!$("dlg").open)$("dlg").showModal();
   }).catch(function(e){alert(e.message)});
@@ -176,30 +277,148 @@ $("dbody").addEventListener("click",function(e){
   if(e.target.id==="save"){
     $("dm").textContent="Saving...";
     api("/api/teacher/submissions/"+encodeURIComponent(openId),{method:"PATCH",body:JSON.stringify({status:$("ds").value,comment:$("dc").value})})
-    .then(function(){$("dm").textContent="Saved.";load()}).catch(function(er){$("dm").textContent=er.message});
+    .then(function(){$("dm").textContent="Saved.";loadAll()}).catch(function(er){$("dm").textContent=er.message});
   }else if(e.target.id==="del"){
-    if(!confirm("Delete this submission? This cannot be undone."))return;
-    api("/api/teacher/submissions/"+encodeURIComponent(openId),{method:"DELETE"}).then(function(){$("dlg").close();load()}).catch(function(er){alert(er.message)});
+    if(!confirm("Delete this idea? This cannot be undone."))return;
+    api("/api/teacher/submissions/"+encodeURIComponent(openId),{method:"DELETE"}).then(function(){$("dlg").close();loadAll()}).catch(function(er){alert(er.message)});
   }
 });
 $("close").onclick=function(){$("dlg").close()};
 
 function cell(v){v=String(v==null?"":v);if(/^[=+\-@\t\r]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"'}
 $("exp").onclick=function(){
-  var head=["Sent","Name","Email","Roll","Batch","Idea","Technologies","Originality %","Verdict","Difficulty","Decision","Comment","Similar to"];
-  var rows=items.map(function(x){return [new Date(x.at).toISOString(),x.name,x.email,x.roll,x.batch,x.idea,x.tech,n(x.originality),x.verdict,x.difficulty,x.status,x.comment,(x.similar||[]).map(function(m){return m.name+" "+m.pct+"%"}).join("; ")].map(cell).join(",")});
+  var head=["Sent","Name","Email","Roll","Class","Team","Members","Round","Idea","Technologies","Originality %","Verdict","Difficulty","Decision","Comment","Similar to"];
+  var rows=items.map(function(x){return [new Date(x.at).toISOString(),x.name,x.email,x.roll,x.batch,x.team||"",(x.members||[]).map(function(m){return m.name}).join("; "),x.round,x.idea,x.tech,n(x.originality),x.verdict,x.difficulty,x.status,x.comment,(x.similar||[]).map(function(m){return m.name+" "+m.pct+"%"}).join("; ")].map(cell).join(",")});
   var blob=new Blob(["\ufeff"+head.map(cell).join(",")+"\n"+rows.join("\n")],{type:"text/csv"});
   var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="ideaforge-submissions.csv";a.click();
 };
-$("ref").onclick=function(){load()};
+$("ref").onclick=function(){loadAll()};
+
+/* ---------- classes and students ---------- */
+var curClass=null,lastCreds=[];
+$("curl").textContent=location.origin+"/student";
+function loadClasses(){api("/api/teacher/classes").then(function(c){classes=c;fillClasses();drawClasses()}).catch(function(){})}
+function drawClasses(){
+  $("cempty").hidden=classes.length>0;
+  $("cgrid").innerHTML=classes.map(function(c){return '<div class="card"><b>'+esc(c.name)+'</b>'+(me&&me.admin&&c.teacher?'<div class="sm">Teacher: '+esc(c.teacher)+'</div>':'')+'<div class="sm" style="margin:8px 0">'+c.students+' student'+(c.students===1?'':'s')+'. '+c.ideas+' idea'+(c.ideas===1?'':'s')+' sent.</div><button type="button" class="btn" style="margin:0" data-open="'+esc(c.id)+'">Manage students</button></div>'}).join("");
+}
+$("cgrid").addEventListener("click",function(e){var b=e.target.closest("button");if(b&&b.dataset.open)openClass(b.dataset.open)});
+$("cmake").onclick=function(){
+  var name=$("cname").value.trim(),m=$("cmsg");
+  if(!name){m.textContent="Type a class name.";return}
+  m.textContent="Creating...";
+  api("/api/teacher/classes",{method:"POST",body:JSON.stringify({name:name})}).then(function(c){$("cname").value="";m.textContent="Class created. Open it to add your students.";return api("/api/teacher/classes")}).then(function(c){classes=c;fillClasses();drawClasses()}).catch(function(er){m.textContent=er.message});
+};
+$("cname").addEventListener("keydown",function(e){if(e.key==="Enter")$("cmake").click()});
+
+function credsHtml(title,rows){
+  lastCreds=rows;
+  return '<b>'+esc(title)+'</b><p class="sm" style="margin:4px 0">Give each person their login ID and temporary password. They set their own password at the first login. <b>These passwords are shown only now.</b></p><table><thead><tr><th>Login ID</th><th>Name</th><th>Temporary password</th><th>Note</th></tr></thead><tbody>'
+   +rows.map(function(r){return '<tr><td>'+esc(r.roll)+'</td><td>'+esc(r.name)+'</td><td class="pw">'+esc(r.tempPassword||"")+'</td><td class="sm">'+esc(r.result||"")+'</td></tr>'}).join("")
+   +'</tbody></table><button type="button" data-act="csv">Download CSV</button> <button type="button" data-act="print">Print</button>';
+}
+function credsActions(e){
+  var b=e.target.closest("button");if(!b||!b.dataset.act)return;
+  if(b.dataset.act==="print")window.print();
+  else{
+    var rows=lastCreds.filter(function(r){return r.tempPassword}).map(function(r){return [r.roll,r.name,r.tempPassword,location.origin+(curClass?"/student":"/teacher/login")].map(cell).join(",")});
+    var blob=new Blob(["\ufeff"+["Login ID","Name","Temporary password","Login page"].map(cell).join(",")+"\n"+rows.join("\n")],{type:"text/csv"});
+    var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="ideaforge-logins.csv";a.click();
+  }
+}
+$("cres").addEventListener("click",credsActions);
+$("tcreds").addEventListener("click",credsActions);
+
+function openClass(id){
+  curClass=classes.filter(function(c){return c.id===id})[0];if(!curClass)return;
+  $("cdt").textContent=curClass.name;$("cres").hidden=true;$("ctext").value="";$("cmsg2").textContent="";
+  if(!$("cdlg").open)$("cdlg").showModal();loadRoster();
+}
+function loadRoster(){
+  api("/api/teacher/classes/"+encodeURIComponent(curClass.id)+"/students").then(function(l){
+    $("cr0").hidden=l.length>0;
+    $("croster").innerHTML=l.map(function(s){return '<tr><td><b>'+esc(s.roll)+'</b></td><td>'+esc(s.name)+'</td><td><input type="text" class="tin" maxlength="40" value="'+esc(s.team||"")+'" data-team="'+esc(s.id)+'" placeholder="none" aria-label="Team for '+esc(s.name)+'"></td><td>'+(s.firstLoginDone?tag("t-build","Done"):tag("t-gray","Not yet"))+'</td><td>'+s.ideas+'</td><td><button type="button" data-reset="'+esc(s.id)+'">Reset password</button> <button type="button" data-del="'+esc(s.id)+'" style="color:var(--drop);border-color:var(--drop)">Remove</button></td></tr>'}).join("");
+  }).catch(function(){});
+}
+$("cadd").onclick=function(){
+  var text=$("ctext").value,m=$("cmsg2");
+  if(!text.trim()){m.textContent="Type at least one line.";return}
+  m.textContent="Creating accounts...";$("cadd").disabled=true;
+  api("/api/teacher/classes/"+encodeURIComponent(curClass.id)+"/students",{method:"POST",body:JSON.stringify({text:text})}).then(function(d){
+    $("cres").innerHTML=credsHtml("Accounts",d.results);$("cres").hidden=false;$("ctext").value="";m.textContent="";loadRoster();loadClasses();
+  }).catch(function(er){m.textContent=er.message}).then(function(){$("cadd").disabled=false});
+};
+$("croster").addEventListener("click",function(e){
+  var b=e.target.closest("button");if(!b)return;
+  if(b.dataset.reset){
+    api("/api/teacher/students/"+encodeURIComponent(b.dataset.reset)+"/reset",{method:"POST",body:"{}"}).then(function(d){
+      $("cres").innerHTML=credsHtml("New temporary password",[{roll:d.roll,name:d.name,tempPassword:d.tempPassword,result:"Password reset"}]);$("cres").hidden=false;$("cres").scrollIntoView({block:"nearest"});loadRoster();
+    }).catch(function(er){alert(er.message)});
+  }else if(b.dataset.del){
+    if(!confirm("Remove this student? Their login stops working. Ideas they already sent stay in your list."))return;
+    api("/api/teacher/students/"+encodeURIComponent(b.dataset.del),{method:"DELETE"}).then(function(){loadRoster();loadClasses()}).catch(function(er){alert(er.message)});
+  }
+});
+$("croster").addEventListener("change",function(e){
+  var i=e.target.closest("input[data-team]");if(!i)return;
+  api("/api/teacher/students/"+encodeURIComponent(i.dataset.team)+"/team",{method:"PATCH",body:JSON.stringify({team:i.value})}).then(function(d){i.value=d.team;i.style.outline="2px solid var(--build)";setTimeout(function(){i.style.outline=""},900)}).catch(function(er){alert(er.message)});
+});
+$("cclose").onclick=function(){$("cdlg").close();loadClasses()};
+
+/* ---------- topics ---------- */
+function loadTopics(){api("/api/teacher/topics").then(drawTopics).catch(function(){})}
+function hbar(label,v,max,cls){var p=max?Math.round(v/max*100):0;return '<div class="hbar"><span>'+label+'</span><span class="bar"><i style="width:'+p+'%'+(cls?';background:'+cls:'')+'"></i></span><b>'+v+'</b></div>'}
+function drawTopics(d){
+  if(!d.total){$("tsummary").innerHTML="";$("tcharts").innerHTML="";$("ttopics").innerHTML='<p class="empty panel">No ideas yet. When students send ideas, the popular topics show up here.</p>';return}
+  var top=d.topics[0];
+  $("tsummary").innerHTML=[["Ideas sent",d.total],["Teams or students",d.units],["Average originality",d.avg+"%"],["Most crowded topic",top?esc(top.label)+" ("+top.units+")":"None"]].map(function(k){return '<div class="stat"><b style="font-size:'+(String(k[1]).length>8?'18px':'28px')+'">'+k[1]+'</b><span>'+k[0]+'</span></div>'}).join("");
+  var mb=Math.max.apply(null,d.buckets.concat([1])),mv=Math.max(d.verdicts.build,d.verdicts.change,d.verdicts.drop,1);
+  var lab=["0 to 19%","20 to 39%","40 to 59%","60 to 79%","80 to 100%"];
+  $("tcharts").innerHTML='<div class="panel"><h3 style="margin-top:0">How original are the ideas?</h3>'+d.buckets.map(function(v,i){return hbar(lab[i],v,mb)}).join("")+'</div><div class="panel"><h3 style="margin-top:0">What did the checker say?</h3>'+hbar("Build it",d.verdicts.build,mv,"var(--build)")+hbar("Change first",d.verdicts.change,mv,"var(--change)")+hbar("Don\'t build",d.verdicts.drop,mv,"var(--drop)")+'</div>';
+  $("ttopics").innerHTML=(d.topics.length?'':'<p class="empty panel">No two ideas share a main topic yet. That is a good sign.</p>')+d.topics.map(function(c){
+    return '<div class="topic"><h3>'+esc(c.label)+(c.units>=3?' '+tag("t-drop","Crowded"):'')+'</h3><span class="sm">'+c.units+' team'+(c.units===1?'':'s')+' or student'+(c.units===1?'':'s')+'. Average originality '+c.avg+'%.</span><ul>'+c.ideas.slice(0,6).map(function(i){return '<li>'+esc(i.idea)+' <span class="sm">by '+esc(i.who)+(i.className?', '+esc(i.className):'')+' '+tag(ST[i.status]||"t-gray",i.status)+'</span></li>'}).join("")+(c.ideas.length>6?'<li class="sm">and '+(c.ideas.length-6)+' more</li>':'')+'</ul><button type="button" data-word="'+esc(c.word)+'">Show these ideas</button></div>'}).join("")
+   +(d.alone?'<p class="sm">'+d.alone+' idea'+(d.alone===1?' stands':'s stand')+' alone, with no shared topic.</p>':'');
+}
+$("ttopics").addEventListener("click",function(e){var b=e.target.closest("button[data-word]");if(!b)return;$("q").value=b.dataset.word;view("ideas");draw()});
+
+/* ---------- teachers (admin) ---------- */
+function loadTeachers(){
+  api("/api/admin/teachers").then(function(t){
+    $("trows").innerHTML=t.map(function(x){
+      var st=x.status==="approved"?tag("t-build","On"):tag("t-drop","Off");
+      var act=x.admin||(me&&x.id===me.id)?'<span class="sm">'+(x.admin?"Admin":"You")+'</span>':'<button type="button" data-treset="'+esc(x.id)+'">Reset password</button> <button type="button" data-tst="'+esc(x.id)+'" data-s="'+(x.status==="approved"?"declined":"approved")+'">'+(x.status==="approved"?"Turn off":"Turn on")+'</button>';
+      return '<tr><td><b>'+esc(x.name)+'</b></td><td>'+esc(x.email)+'</td><td>'+st+'</td><td>'+(x.firstLoginDone?tag("t-build","Done"):tag("t-gray","Not yet"))+'</td><td>'+x.classes+'</td><td>'+act+'</td></tr>'}).join("");
+  }).catch(function(){});
+}
+function showTeacherCreds(title,d){
+  curClass=null;
+  $("tcreds").innerHTML=credsHtml(title+" Login page: "+location.origin+"/teacher/login",[{roll:d.email,name:d.name,tempPassword:d.tempPassword,result:"Teacher"}]);$("tcreds").hidden=false;
+}
+$("tmake").onclick=function(){
+  var m=$("tmsg"),name=$("tn").value.trim(),email=$("te").value.trim();
+  if(!name||!email){m.textContent="Enter the name and the email.";return}
+  m.textContent="Creating...";
+  api("/api/admin/teachers",{method:"POST",body:JSON.stringify({name:name,email:email})}).then(function(d){$("tn").value="";$("te").value="";m.textContent="";showTeacherCreds("Teacher account created.",d);loadTeachers()}).catch(function(er){m.textContent=er.message});
+};
+$("trows").addEventListener("click",function(e){
+  var b=e.target.closest("button");if(!b)return;
+  if(b.dataset.treset)api("/api/admin/teachers/"+encodeURIComponent(b.dataset.treset)+"/reset",{method:"POST",body:"{}"}).then(function(d){showTeacherCreds("New temporary password.",d);$("tcreds").scrollIntoView({block:"nearest"})}).catch(function(er){alert(er.message)});
+  else if(b.dataset.tst)api("/api/admin/teachers/"+encodeURIComponent(b.dataset.tst)+"/status",{method:"POST",body:JSON.stringify({status:b.dataset.s})}).then(loadTeachers).catch(function(er){alert(er.message)});
+});
+
+/* ---------- start ---------- */
 $("logout").onclick=logout;
-fetch("/api/me").then(function(r){return r.json()}).then(function(d){
-  if(!d.user){location.href="/login?next=/teacher";return}
-  if(d.user.role!=="teacher"){location.href="/";return}
-  $("tname").textContent=d.user.name;$("logout").hidden=false;
-  if(d.online&&d.storage!=="firebase")$("warn").hidden=false;
-  load();
-}).catch(function(){location.href="/login?next=/teacher"});
+function boot(){
+  fetch("/api/me").then(function(r){return r.json()}).then(function(d){
+    if(!d.user||d.user.mustChange){location.href="/teacher/login";return}
+    if(d.user.role!=="teacher"){location.href="/";return}
+    me=d.user;$("tname").textContent=me.name;$("logout").hidden=false;
+    $("tabs").hidden=false;$("tabT").hidden=!me.admin;
+    $("warn").hidden=!(d.online&&d.storage!=="firebase");
+    view("ideas");loadAll();
+  }).catch(function(){location.href="/teacher/login"});
+}
+boot();
 })();
 </script>
 </body>

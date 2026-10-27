@@ -228,9 +228,13 @@ details.more summary,details.past summary{cursor:pointer;color:var(--blue);font-
         </div>
       </details>
       <button class="btn" id="go">Check my idea</button>
-      <p class="hint" id="loginNote" hidden>You need a free account to check ideas. We will ask you to log in or sign up.</p>
+      <p class="hint" id="loginNote" hidden>You are not logged in. You can still check an idea, but it will not be saved. Students log in with the roll number and password from their teacher to save and send ideas.</p>
       <p class="errtxt" id="formErr" role="alert" hidden></p>
-      <details class="past">
+      <details class="past" id="classBox" hidden>
+        <summary>My class</summary>
+        <div id="classInner"></div>
+      </details>
+      <details class="past" id="histBox">
         <summary>My ideas</summary>
         <ul class="hist" id="hist"></ul>
         <p class="empty" id="histEmpty">Log in to see your saved checks.</p>
@@ -287,6 +291,8 @@ details.more summary,details.past summary{cursor:pointer;color:var(--blue);font-
 
 <div class="wrap sec" id="faq">
   <h2>Questions</h2>
+  <details class="q"><summary>How do classes and teachers work?</summary><p>The site admin creates each teacher's account. A teacher creates a class and adds students by roll number, and can put students into teams. Each student gets a login ID (the roll number) and a temporary password, then sets their own password. Students, or one team, send ideas to their teacher. If the teacher asks for changes, they send an improved version, and the teacher sees how the score changed. When an idea is approved, they can print an approval letter.</p></details>
+  <details class="q"><summary>Do I need an account to try it?</summary><p>No. Anyone can check an idea as a guest, a few times an hour. Guests cannot save or send ideas. Students log in with the roll number their teacher gave them.</p></details>
   <details class="q"><summary>Is the score exact?</summary><p>No. It is an estimate. Use it to compare ideas, and open the links yourself to check.</p></details>
   <details class="q"><summary>Where does my idea go?</summary><p>Your idea is sent to Google's Gemini AI and to paper and GitHub search. Your account and your checks are saved on this site's server. If you choose Send to teacher, your teacher sees your name, roll number and report. Your password is stored scrambled, never as plain text.</p></details>
   <details class="q"><summary>Is it free?</summary><p>There is no sign-up. It uses your own free Gemini key, so the limits come from Google.</p></details>
@@ -319,7 +325,7 @@ $("again").onclick=function(){view("home");var c=$("checker");if(c)c.scrollIntoV
 function esc(s){var d=document.createElement("div");d.textContent=s==null?"":String(s);return d.innerHTML}
 function n(v){v=Number(v);return isNaN(v)?0:Math.max(0,Math.min(100,Math.round(v)))}
 function lvl(v){return v>=70?"High":v>=40?"Medium":"Low"}
-var me=null,HIST=[];
+var me=null,HIST=[],TEAM=null;
 function load(){return HIST}
 
 /* examples */
@@ -331,7 +337,7 @@ function drawHist(){
   var h=load(),ul=$("hist");
   $("histEmpty").hidden=h.length>0;$("clear").hidden=h.length===0||!me;
   $("histEmpty").textContent=me?"Your checked ideas will appear here.":"Log in to see your saved checks.";
-  ul.innerHTML=h.map(function(x,i){var v=V[x.verdict]||V["CHANGE IT"];var st=x.submission?'<small class="st">'+esc(x.submission.status)+'</small>':"";return '<li><button type="button" data-i="'+i+'"><span class="dot '+v.d+'"></span><span class="t">'+esc(x.idea)+'</span>'+st+'<b>'+n(x.originality)+'%</b></button></li>'}).join("");
+  ul.innerHTML=h.map(function(x,i){var v=V[x.verdict]||V["CHANGE IT"];var st=x.submission?'<small class="st">'+(x.submission.round>1?"R"+x.submission.round+" ":"")+esc(x.submission.status)+'</small>':"";return '<li><button type="button" data-i="'+i+'"><span class="dot '+v.d+'"></span><span class="t">'+esc(x.idea)+'</span>'+st+'<b>'+n(x.originality)+'%</b></button></li>'}).join("");
 }
 function refreshHist(){
   if(!me){HIST=[];drawHist();return Promise.resolve()}
@@ -356,7 +362,6 @@ function stopProgress(){timers.forEach(clearTimeout);timers=[]}
 function run(){
   var idea=$("idea").value.trim();
   var fe=$("formErr");if(idea.length<8){fe.textContent="Write at least one full sentence about your idea, then press Check my idea.";fe.hidden=false;$("idea").focus();return}fe.hidden=true;
-  if(!me){try{sessionStorage.setItem("ifx_draft",JSON.stringify({idea:$("idea").value,tech:$("tech").value,level:$("level").value,time:$("time").value,budget:$("budget").value,cur:$("cur").value}))}catch(e){}location.href="/login?next=/";return}
   btn.disabled=true;btn.textContent="Checking...";view("result");startProgress();
   fetch("/api/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({idea:idea,level:$("level").value,time:$("time").value,budget:$("budget").value,currency:$("cur").value,tech:$("tech").value})})
   .then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||"Request failed");return d})})
@@ -422,6 +427,12 @@ function budgetPanel(x){
   +(b.advice?'<p class="hint">'+esc(b.advice)+'</p>':"")
   +priceNote(x.r)+'</section>';
 }
+function sources(ev){
+  var S=ev.sources;if(!S)return "";
+  var names=[["openAlex","OpenAlex"],["semanticScholar","Semantic Scholar"],["arxiv","arXiv"],["github","GitHub"]],good=[],bad=[];
+  names.forEach(function(k){(S[k[0]]?good:bad).push(k[1])});
+  return ' Searched: '+(good.length?good.join(", "):"nothing")+'.'+(bad.length?' No answer from: '+bad.join(", ")+'.':'');
+}
 function show(x){
   var r=x.r,ev=r.evidence||{},v=V[r.verdict]||V["CHANGE IT"],o=n(r.originality);
   var delta=prevOrig!=null?'<span class="chg">Originality: '+prevOrig+'% before, '+o+'% now</span>':"";
@@ -435,7 +446,7 @@ function show(x){
   +'<p class="note">Scores are estimates from the evidence below and the AI\'s judgement. Use them to compare ideas, not as exact measurements.</p></section>'
   +whyPanel(r,ev)+uniquePanel(r)
   +'<section class="panel"><h2>Three more unique versions</h2>'+(r.mutations||[]).map(function(m,i){return '<div class="mut"><b>'+esc(m.title)+'</b><p>'+esc(m.change)+'</p><span class="m">About '+n(m.new_originality)+'% original</span><span class="m">Difficulty: '+esc(m.difficulty)+'</span>'+(m.extra_cost?'<span class="m">'+esc(m.extra_cost)+'</span>':'')+'<button type="button" class="btn2" data-m="'+i+'">Check this version</button></div>'}).join("")+'</section>'
-  +techPanel(r)+budgetPanel(x)+'<section class="panel"><h2>Evidence we found</h2><p class="hint" style="margin-top:0">'+ghNote+' Search terms used: '+esc((r.queries||[]).join(", "))+'.</p>'
+  +techPanel(r)+budgetPanel(x)+'<section class="panel"><h2>Evidence we found</h2><p class="hint" style="margin-top:0">'+ghNote+sources(ev)+' Search terms used: '+esc((r.queries||[]).join(", "))+'.</p>'
   +'<div class="tabs" role="tablist"><button class="tab" role="tab" aria-selected="true" data-t="p">Research papers ('+(ev.papers||[]).length+')</button><button class="tab" role="tab" aria-selected="false" data-t="g">GitHub projects ('+(ev.repos||[]).length+')</button></div>'
   +'<ul class="ev" id="evP">'+papers+'</ul><ul class="ev" id="evG" hidden>'+(repos||'<li class="empty">No GitHub projects to show.</li>')+'</ul></section>'
   +sendPanel(x)+'<div class="acts"><button class="btn2" id="copy">Copy report</button><button class="btn2" id="dl">Download report</button><button class="btn2" id="pr">Print or save as PDF</button></div></div>';
@@ -450,17 +461,54 @@ main.addEventListener("click",function(e){
   else if(t.id==="pr")window.print();
   else if(t.id==="sendTeacher"&&current)sendToTeacher(t);
 });
+function improvable(){
+  var seen={},out=[];
+  HIST.forEach(function(h){var s=h.submission;if(s&&s.status==="Needs change"&&s.latest===h.id&&!seen[s.id]){seen[s.id]=1;out.push(s)}});
+  var t=TEAM&&TEAM.submission;if(t&&t.status==="Needs change"&&!seen[t.id]){seen[t.id]=1;out.push(t)}
+  return out;
+}
+function loadTeam(){
+  if(!me||me.role!=="student"){TEAM=null;return Promise.resolve()}
+  return fetch("/api/my/team").then(function(r){return r.ok?r.json():null}).then(function(t){TEAM=t;drawClass()}).catch(function(){});
+}
+function drawClass(){
+  var box=$("classBox"),inner=$("classInner");
+  if(!me||me.role!=="student"){box.hidden=true;return}
+  box.hidden=false;box.open=!me.cls;
+  if(!me.cls){inner.innerHTML='<p class="hint" style="margin:8px 0 0">Your teacher has not added you to a class yet. Ask your teacher.</p>';return}
+  var t=TEAM&&TEAM.team?'<br>Your team: <b>'+esc(TEAM.team)+'</b> ('+TEAM.members.map(function(m){return esc(m.name)}).join(", ")+')'+(TEAM.submission?'. Team idea: <b>'+esc(TEAM.submission.status)+'</b>':''):'';
+  inner.innerHTML='<p class="hint" style="margin:8px 0 0">You are in <b>'+esc(me.cls.name)+'</b>'+(me.cls.teacher?' with '+esc(me.cls.teacher):'')+'.'+t+'</p>';
+}
+function guestPanel(){
+  return '<section class="panel"><h2>Want to save this?</h2><p class="hint" style="margin-top:0">Students log in with their roll number to save their checks and send ideas to a teacher. Your teacher makes your account.</p><a class="btn2" href="/student" style="display:inline-block;text-decoration:none">Student login</a></section>';
+}
 function sendPanel(x){
-  if(!me||me.role!=="student"||!x.id)return "";
+  if(!me)return guestPanel();
+  if(me.role!=="student"||!x.id)return "";
   var s=x.submission;
-  if(s)return '<section class="panel" id="sendBox"><h2>Sent to your teacher</h2><p>Decision: <b>'+esc(s.status)+'</b></p>'+(s.comment?'<p>Teacher comment: '+esc(s.comment)+'</p>':'')+'</section>';
-  return '<section class="panel" id="sendBox"><h2>Send this idea to your teacher</h2><p class="hint" style="margin-top:0">You will send it as <b>'+esc(me.name)+'</b> ('+esc(me.roll)+(me.batch?', '+esc(me.batch):'')+'). Your teacher sees this report, your scores and any similar ideas in your batch.</p><button type="button" class="btn" id="sendTeacher" style="width:auto;padding:11px 20px">Send to teacher</button><p class="hint" id="sendMsg" role="status"></p></section>';
+  if(s){
+    if(s.latest!==x.id)return '<section class="panel" id="sendBox"><h2>An older version</h2><p class="hint" style="margin-top:0">A newer version of this idea was sent to your teacher (round '+esc(s.round)+', now '+esc(s.status)+').</p></section>';
+    var h='<section class="panel" id="sendBox"><h2>Sent to your teacher'+(s.round>1?' (round '+esc(s.round)+')':'')+'</h2><p style="margin:0 0 6px">Decision: <b>'+esc(s.status)+'</b></p>';
+    if(s.comment)h+='<p style="margin:0 0 6px">Teacher comment: '+esc(s.comment)+'</p>';
+    if(s.status==="Approved")h+='<p style="margin:0 0 6px"><a href="/letter?id='+encodeURIComponent(s.id)+'" target="_blank" rel="noopener">Open the approval letter</a></p>';
+    if(s.status==="Needs change")h+='<p class="hint">To make a better version, choose <b>Check this version</b> on one of the suggestions above. Then send it as an improved version.</p>';
+    return h+'</section>';
+  }
+  if(!me.cls)return '<section class="panel" id="sendBox"><h2>Send this idea to your teacher</h2><p class="hint" style="margin-top:0">Your teacher has not added you to a class yet. Ask your teacher.</p></section>';
+  var ts=TEAM&&TEAM.team&&TEAM.submission;
+  if(ts&&ts.status!=="Rejected"&&ts.status!=="Needs change")return '<section class="panel" id="sendBox"><h2>Your team already sent an idea</h2><p class="hint" style="margin-top:0">Team <b>'+esc(TEAM.team)+'</b> sent "'+esc(ts.idea)+'". Status: <b>'+esc(ts.status)+'</b>. A team sends one idea at a time.</p>'+(ts.status==="Approved"?'<p><a href="/letter?id='+encodeURIComponent(ts.id)+'" target="_blank" rel="noopener">Open the approval letter</a></p>':'')+'</section>';
+  var imp=improvable(),opts="";
+  var teamTxt=TEAM&&TEAM.team?', for team <b>'+esc(TEAM.team)+'</b> ('+TEAM.members.map(function(m){return esc(m.name)}).join(", ")+')':"";
+  if(imp.length)opts='<fieldset style="border:1px solid var(--line);border-radius:8px;margin:10px 0;padding:8px 12px"><legend class="hint">What is this?</legend><label style="display:block;font-weight:400"><input type="radio" name="sendKind" value="" checked> A new idea</label>'+imp.map(function(i){return '<label style="display:block;font-weight:400"><input type="radio" name="sendKind" value="'+esc(i.id)+'"> An improved version of: '+esc(i.idea)+'</label>'}).join("")+'</fieldset>';
+  return '<section class="panel" id="sendBox"><h2>Send this idea to your teacher</h2><p class="hint" style="margin-top:0">You will send it as <b>'+esc(me.name)+'</b> ('+esc(me.roll)+') in <b>'+esc(me.cls.name)+'</b>'+teamTxt+'. Your teacher sees this report, your scores and any similar ideas in your class.</p>'+opts+'<button type="button" class="btn" id="sendTeacher" style="width:auto;padding:11px 20px">Send to teacher</button><p class="hint" id="sendMsg" role="status"></p></section>';
 }
 function sendToTeacher(b){
-  var msg=$("sendMsg");b.disabled=true;msg.textContent="Sending...";
-  fetch("/api/submit",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({checkId:current.id})})
+  var msg=$("sendMsg"),k=document.querySelector('input[name="sendKind"]:checked'),rep=k?k.value:"";
+  b.disabled=true;msg.textContent="Sending...";
+  fetch("/api/submit",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({checkId:current.id,replaces:rep||undefined})})
   .then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||"Could not send");return d})})
-  .then(function(d){current.submission=d.submission;$("sendBox").outerHTML=sendPanel(current);refreshHist()})
+  .then(function(d){current.submission=d.submission;return Promise.all([refreshHist(),loadTeam()])})
+  .then(function(){$("sendBox").outerHTML=sendPanel(current)})
   .catch(function(e){msg.textContent=e.message;b.disabled=false});
 }
 function report(x){
@@ -469,15 +517,14 @@ function report(x){
 }
 function authUI(){
   var nu=$("navUser");
-  if(!me)nu.innerHTML='<a href="/login">Log in</a> <a class="navbtn" href="/login?mode=signup">Sign up</a>';
+  if(!me)nu.innerHTML='<a href="/student">Student login</a> <a class="navbtn" href="/teacher/login">Teacher login</a>';
   else nu.innerHTML=(me.role==="teacher"?'<a href="/teacher">Teacher dashboard</a> ':'')+'<span class="navhi">Hi, '+esc(me.name.split(" ")[0])+'</span> <button type="button" class="navbtn" id="logout">Log out</button>';
   var l=$("logout");if(l)l.onclick=function(){fetch("/api/auth/logout",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"}).then(function(){location.reload()})};
-  var hb=document.querySelector("details.past");if(hb&&me)hb.open=true;
+  var hb=$("histBox");if(hb&&me)hb.open=true;drawClass();
   $("loginNote").hidden=!!me;
 }
-try{var dr=JSON.parse(sessionStorage.getItem("ifx_draft")||"null");if(dr){["idea","tech","level","time","budget"].forEach(function(k){if(dr[k]!=null)$(k).value=dr[k]});if(dr.cur)$("cur").value=dr.cur;sessionStorage.removeItem("ifx_draft")}}catch(e){}
 drawHist();
-fetch("/api/me").then(function(r){return r.json()}).then(function(d){me=d.user;authUI();refreshHist()}).catch(function(){authUI()});
+fetch("/api/me").then(function(r){return r.json()}).then(function(d){me=d.user;authUI();refreshHist();loadTeam()}).catch(function(){authUI()});
 })();
 </script>
 </body>
