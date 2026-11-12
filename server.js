@@ -61,14 +61,8 @@ function limitReached(ip, hourlyLimit = RATE_PER_HOUR, paid = false) {
 
 const GEMINI = process.env.GEMINI_API_KEY;
 const MODELS = [
-  process.env.GEMINI_MODEL,
-  ...(process.env.GEMINI_FALLBACKS || "").split(","),
-  "gemini-3.8-flash",
-  "gemini-3.8-flash-lite",
-  "gemini-flash-latest",
-  "gemini-flash-lite-latest",
-  "gemini-2.5-flash",
-  "gemini-2.5-flash-lite",
+  process.env.GEMINI_MODEL || "gemini-3.8-flash",
+  ...(process.env.GEMINI_FALLBACKS || "gemini-3.5-flash-lite").split(","),
 ]
   .map((m) => (m || "").trim())
   .filter((m, i, all) => m && all.indexOf(m) === i);
@@ -88,6 +82,7 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 12000) {
 }
 
 async function callModel(model, prompt, opts = {}) {
+  if (!GEMINI) throw new Error("GEMINI_API_KEY is missing. Add a valid Gemini API key in the server environment.");
   const generationConfig = {};
   // Gemini 3.x uses its default sampling behavior; avoid unsupported legacy knobs.
   if (!/^gemini-3\./.test(model)) generationConfig.temperature = opts.temperature ?? 0.3;
@@ -127,7 +122,7 @@ async function callModel(model, prompt, opts = {}) {
     return { text, sources };
   }
   try { return JSON.parse(text); }
-  catch { throw new Error("Gemini returned an unreadable result. Try again, or change GEMINI_MODEL to gemini-2.5-flash and restart."); }
+  catch { throw new Error("Gemini returned an unreadable result. Check the selected model and try again."); }
 }
 
 async function gemini(prompt, opts = {}) {
@@ -145,7 +140,8 @@ async function gemini(prompt, opts = {}) {
         return out;
       } catch (e) {
         last = e;
-        const quota = e.status === 429 && /quota/i.test(e.message);
+        console.error(`[Gemini] Model ${m} failed:`, e.status || "NETWORK/TIMEOUT", e.message);
+        const quota = e.status === 429 && /quota/i.test(e.message || "");
         const timedOut = /timed out|fetch failed|networkerror/i.test(e.message || "");
         if (timedOut) break; // Try the next model instead of repeating the same stalled request.
         if ((e.status === 503 || (e.status === 429 && !quota)) && attempt < 3) {
@@ -159,7 +155,7 @@ async function gemini(prompt, opts = {}) {
     if (![404, 400, 408, 429, 500, 502, 503, 504].includes(last.status) && !/timed out|fetch failed|networkerror/i.test(last.message || "")) throw last;
   }
   working = null;
-  throw last;
+  throw last || new Error("No Gemini models are configured. Set GEMINI_MODEL and GEMINI_FALLBACKS.");
 }
 
 const REGION = { INR: "India", USD: "the United States", GBP: "the United Kingdom" };

@@ -1,17 +1,13 @@
 {
-  "name": "ideaforge-x",
+  "name": "ideaforge-x-server",
   "version": "1.0.0",
+  "private": true,
   "type": "module",
-  "scripts": {
-    "start": "node server.js",
-    "test": "node --test"
-  },
+  "engines": { "node": ">=20" },
+  "scripts": { "start": "node server.js", "check": "node --check server.js" },
   "dependencies": {
-    "express": "^4.19.2",
-    "dotenv": "^16.4.5",
-    "firebase-admin": "^13.0.0"
-  },
-  "engines": {
-    "node": ">=18"
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "firebase-admin": "^13.0.2"
   }
 }
