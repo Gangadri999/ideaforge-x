@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IdeaForge-X: check your project idea before you build it</title>
+<title>IdeaForge-X: build student projects with your teacher</title>
 <style>
+:root{color-scheme:light}
 :root{--ink:#14213d;--mu:#5b6b82;--paper:#eef2f7;--panel:#fff;--line:#d5dde8;--blue:#2457ff;--blue-soft:#e6ecff;--build:#0f8a5f;--build-bg:#e3f5ec;--change:#9a6200;--change-bg:#fdf0d5;--drop:#b83232;--drop-bg:#fbe6e6;--r:10px}
-@media (prefers-color-scheme:dark){:root{--ink:#e8edf6;--mu:#9aa9bf;--paper:#0f1623;--panel:#172033;--line:#2b3850;--blue:#7b9bff;--blue-soft:#1f2c4d;--build:#4cc38a;--build-bg:#12301f;--change:#f0b53c;--change-bg:#3a2d10;--drop:#ef7b7b;--drop-bg:#3b1a1a}}
+
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
 header{padding:20px 24px 4px;max-width:1120px;margin:0 auto}
@@ -31,9 +33,9 @@ textarea{min-height:120px;resize:vertical}
 .btn{font:inherit;font-weight:600;background:var(--blue);color:#fff;border:0;border-radius:8px;padding:11px 16px;cursor:pointer;width:100%;margin-top:16px}
 .btn:disabled{opacity:.6;cursor:progress}
 .btn2{font:inherit;font-size:14px;font-weight:600;background:var(--panel);color:var(--blue);border:1px solid var(--blue);border-radius:8px;padding:7px 12px;cursor:pointer}
-.hist{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.hist{list-style:none;margin:0;padding:0;display:grid;gap:6px;grid-template-columns:minmax(0,1fr)}
 .hist button{width:100%;text-align:left;font:inherit;font-size:14px;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 10px;cursor:pointer;display:flex;gap:8px;align-items:center}
-.hist .t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hist .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dot{width:10px;height:10px;border-radius:50%;flex:none}
 .d-build{background:var(--build)}.d-change{background:var(--change)}.d-drop{background:var(--drop)}
 .empty{color:var(--mu);font-size:14px;margin:0}
@@ -181,6 +183,35 @@ details.more summary,details.past summary{cursor:pointer;color:var(--blue);font-
 .band-hero .nav .navbtn,.navbtn{font:inherit;font-size:14px;font-weight:600;color:#fff;background:transparent;border:1px solid #8fb0ff;border-radius:8px;padding:6px 12px;text-decoration:none;cursor:pointer}
 .navhi{color:#fff;font-size:15px}
 .hist .st{color:var(--mu);font-size:12px;margin-right:4px;white-space:nowrap}
+
+/* Product launch polish */
+:root{--ink:#101b35;--mu:#68758b;--paper:#f5f7fb;--panel:#fff;--line:#e3e8f1;--blue:#5267f5;--blue-soft:#edf0ff;--r:16px}
+body{font-family:Inter,"Segoe UI",system-ui,-apple-system,sans-serif;background:#f7f8fc;letter-spacing:-.01em}
+.band-hero{background:radial-gradient(ellipse at 84% 18%,rgba(91,116,255,.25),transparent 34%),linear-gradient(135deg,#111a35 0%,#182650 60%,#1a2854 100%);position:relative;overflow:hidden;padding-bottom:70px}
+.band-hero:after{content:"";position:absolute;width:520px;height:520px;border:1px solid rgba(255,255,255,.07);border-radius:50%;right:-190px;bottom:-310px;box-shadow:0 0 0 42px rgba(255,255,255,.025),0 0 0 84px rgba(255,255,255,.02);pointer-events:none}
+.nav{position:relative;z-index:1;padding:20px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+.nav .brand{font:750 23px/1.1 Inter,"Segoe UI",sans-serif;letter-spacing:-.06em}.nav .brand b{color:#91a3ff}
+.nav ul{align-items:center;gap:22px}.band-hero .nav a{font-size:13px;color:#c0c9e2;transition:color .18s}.band-hero .nav a:hover{color:#fff}
+.hero2{position:relative;z-index:1;grid-template-columns:minmax(0,1fr) minmax(380px,460px);gap:clamp(36px,7vw,100px);align-items:center;padding:68px 0 16px}
+.pitch h1{font-family:Inter,"Segoe UI",sans-serif;font-size:clamp(42px,5.2vw,64px);letter-spacing:-.065em;line-height:1.02;max-width:650px;margin:18px 0 20px}
+.eyebrow{font-size:11px;letter-spacing:.13em;font-weight:750;color:#aebcff;display:flex;gap:9px;align-items:center;margin:0}.eyebrow span{width:7px;height:7px;background:#64d7ae;border-radius:50%;box-shadow:0 0 12px #64d7ae}
+.lead2{font-size:18px;line-height:1.65;color:#c4cee4;max-width:510px;margin-bottom:28px}
+.ticks{gap:14px}.ticks li{font-size:15px;color:#e2e8f5}.ticks li:before{background:#58d1a4;box-shadow:inset 0 0 0 4px #19264e,0 0 0 2px #58d1a4}
+.hero-proof{display:flex;align-items:center;gap:12px;margin-top:36px;padding-top:22px;border-top:1px solid rgba(255,255,255,.13);max-width:440px;color:#fff}.proof-mark{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:rgba(143,165,255,.16);color:#aab9ff;font-size:19px}.hero-proof b,.hero-proof small{display:block}.hero-proof b{font-size:13px}.hero-proof small{margin-top:2px;color:#aebbd6;font-size:12px}
+.formcard{border:1px solid rgba(255,255,255,.65);border-radius:20px;padding:26px;box-shadow:0 28px 80px rgba(4,10,30,.34)}
+.form-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}.form-kicker{font-size:10px;letter-spacing:.12em;font-weight:800;color:#7886a1}.secure-mark{font-size:11px;font-weight:700;color:#16835f;background:#e8f8f1;border-radius:20px;padding:5px 9px}
+.formcard h2{font:750 25px/1.2 Inter,"Segoe UI",sans-serif;letter-spacing:-.04em;margin:0}.form-intro{margin:7px 0 16px;color:var(--mu);font-size:13px;line-height:1.5}
+.formcard label{font-size:12px;letter-spacing:.01em;color:#34415b;margin:13px 0 6px}.formcard textarea,.formcard input[type=text],.formcard select{background:#fbfcfe;border:1px solid #dfe5ef;border-radius:10px;padding:11px 12px;font-size:14px;transition:border-color .18s,box-shadow .18s}.formcard textarea{min-height:96px}.formcard textarea:focus,.formcard input:focus,.formcard select:focus{outline:0;border-color:#7b8aff;box-shadow:0 0 0 3px rgba(82,103,245,.12)}
+.chips{gap:7px}.chip{font-size:11px;background:#f0f2f8;color:#596781;padding:5px 10px;transition:background .15s,color .15s}.chip:hover{background:#e8ebff;color:#465df1}
+.btn{border-radius:10px;padding:12px 16px;margin-top:14px;background:linear-gradient(135deg,#5c70ff,#4b5ce2);box-shadow:0 7px 16px rgba(78,96,231,.23);transition:transform .16s,box-shadow .16s}.btn:hover{transform:translateY(-1px);box-shadow:0 10px 22px rgba(78,96,231,.3)}
+.sec{padding-top:66px;padding-bottom:66px}.sec h2,.band h2{font-family:Inter,"Segoe UI",sans-serif;font-size:30px;letter-spacing:-.045em}.steps3{gap:14px}.steps3 li,.box,.slip,.panel{border-radius:16px}.steps3 li{padding:22px 20px 22px 68px;background:linear-gradient(145deg,#fff,#fbfcff);border-color:#e6eaf2}.steps3 li:before{background:#eef0ff;color:#5267f5;font:750 17px/34px Inter,sans-serif}.steps3 b{font-size:15px;letter-spacing:-.02em}.steps3 span{font-size:13px;line-height:1.55}
+.slip{box-shadow:0 16px 44px rgba(26,42,80,.08);border-color:#e6eaf2}.slip .top{padding:20px 22px}.slip .top h3{font-family:Inter,sans-serif;font-size:23px;letter-spacing:-.04em}.slip .body{padding:18px 22px}.slip .fix{padding:14px 22px;background:#f7f8fc}.checks{gap:14px}.checks li{font-size:14px;color:#39465e}.box{padding:22px}.box.mine{background:linear-gradient(145deg,#fff,#f7f8ff);box-shadow:0 12px 32px rgba(65,82,180,.08)}
+details.q{max-width:850px}details.q summary{font-size:15px;letter-spacing:-.01em}details.q p{font-size:14px;line-height:1.7}
+footer{background:#f0f2f7;border-top:1px solid #e5e8ef}.rbar .brand{font:750 22px/1.1 Inter,sans-serif;letter-spacing:-.06em}
+@media(max-width:940px){.hero2{padding-top:48px;grid-template-columns:1fr minmax(340px,440px);gap:28px}.nav ul{gap:12px}}
+@media(max-width:760px){.hero2{grid-template-columns:1fr;padding-top:42px}.pitch h1{max-width:600px}.formcard{max-width:600px}.nav ul{gap:10px}.nav ul li:not(:last-child){display:none}.sec{padding-top:46px;padding-bottom:46px}}
+@media(max-width:420px){.formcard{padding:20px}.form-head{align-items:flex-start;flex-direction:column}.band-hero{padding-bottom:44px}.pitch h1{font-size:42px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -199,16 +230,20 @@ details.more summary,details.past summary{cursor:pointer;color:var(--blue);font-
   </nav>
   <div class="hero2">
     <div class="pitch">
-      <h1>Is your project idea really new?</h1>
-      <p class="lead2">Find out in one minute, before you spend four months building something that already exists.</p>
+      <p class="eyebrow"><span></span> YOUR STUDENT PROJECT WORKSPACE</p>
+      <h1>Build your project with your teacher, week by week.</h1>
+      <p class="lead2">Check your idea, get teacher approval, share weekly progress, and prepare the literature notes, data plan and review slides in one place.</p>
       <ul class="ticks">
-        <li>Looks through real research papers and GitHub projects</li>
-        <li>Tells you: build it, change it, or drop it</li>
-        <li>Shows easy ways to make your idea more unique</li>
+        <li>Check your idea against research and existing projects</li>
+        <li>Get a project roadmap when your teacher approves it</li>
+        <li>Share weekly progress and get feedback from your teacher</li>
       </ul>
+      <div class="hero-proof"><span class="proof-mark">↗</span><span><b>From first idea to final review</b><small>Keep project work and teacher guidance together.</small></span></div>
     </div>
     <section class="panel formcard" id="checker" aria-labelledby="h-form">
-      <h2 id="h-form">Check your idea</h2>
+      <div class="form-head"><span class="form-kicker">START WITH A ROUGH IDEA</span><span class="secure-mark">✳ &nbsp;Free to try</span></div>
+      <h2 id="h-form">Get your first signal</h2>
+      <p class="form-intro">Describe what you want to build. We’ll find related work and help you choose your next move.</p>
       <label for="idea">What do you want to build?</label>
       <textarea id="idea" placeholder="Example: A web app that marks classroom attendance using face recognition"></textarea>
       <div class="chips" id="chips" aria-label="Example ideas"></div>
@@ -228,7 +263,7 @@ details.more summary,details.past summary{cursor:pointer;color:var(--blue);font-
         </div>
       </details>
       <button class="btn" id="go">Check my idea</button>
-      <p class="hint" id="loginNote" hidden>You are not logged in. You can still check an idea, but it will not be saved. Students log in with the roll number and password from their teacher to save and send ideas.</p>
+      <p class="hint" id="loginNote" hidden>You are not logged in. You can still check up to 3 ideas an hour, but they are not saved and cannot be sent to a teacher. <a href="/student">Student login or register</a> &middot; <a href="/teacher/login">Teacher login</a></p>
       <p class="errtxt" id="formErr" role="alert" hidden></p>
       <details class="past" id="classBox" hidden>
         <summary>My class</summary>
@@ -248,9 +283,9 @@ details.more summary,details.past summary{cursor:pointer;color:var(--blue);font-
 <div class="wrap sec" id="how">
   <h2>How it works</h2>
   <ol class="steps3">
-    <li><b>Write your idea</b><span>Say what you want to build in one or two sentences.</span></li>
-    <li><b>We search</b><span>We look for the same idea in research papers and on GitHub.</span></li>
-    <li><b>You get an answer</b><span>Build it, change it, or drop it. You also get better ideas, tools and a cost.</span></li>
+    <li><b>Check and submit your idea</b><span>See related work, improve your scope, and send the idea to your teacher.</span></li>
+    <li><b>Build with weekly guidance</b><span>After approval, follow the roadmap, report progress, and get teacher feedback.</span></li>
+    <li><b>Prepare your final review</b><span>Write literature summaries, plan your data, and build review presentation slides.</span></li>
   </ol>
 </div>
 
@@ -274,6 +309,8 @@ details.more summary,details.past summary{cursor:pointer;color:var(--blue);font-
         <li>A table that shows how to make your idea unique</li>
         <li>Tools to use, and what the project may cost</li>
         <li>Links to every paper and project we found</li>
+        <li>A roadmap, weekly teacher feedback, literature worksheet and data sheet after approval</li>
+        <li>Review presentation slides ready to print or save as a PDF</li>
       </ul>
     </div>
   </div>
@@ -291,11 +328,12 @@ details.more summary,details.past summary{cursor:pointer;color:var(--blue);font-
 
 <div class="wrap sec" id="faq">
   <h2>Questions</h2>
-  <details class="q"><summary>How do classes and teachers work?</summary><p>The site admin creates each teacher's account. A teacher creates a class and adds students by roll number, and can put students into teams. Each student gets a login ID (the roll number) and a temporary password, then sets their own password. Students, or one team, send ideas to their teacher. If the teacher asks for changes, they send an improved version, and the teacher sees how the score changed. When an idea is approved, they can print an approval letter.</p></details>
-  <details class="q"><summary>Do I need an account to try it?</summary><p>No. Anyone can check an idea as a guest, a few times an hour. Guests cannot save or send ideas. Students log in with the roll number their teacher gave them.</p></details>
+  <details class="q"><summary>How do students and teachers work together?</summary><p>Students register with their academic details and submit ideas. Teachers select the matching year, branch and section in Student groups. The teacher reviews ideas and can approve them or ask for changes. After approval, the team gets a roadmap, sends weekly progress reports, and receives teacher feedback in the project workspace. Students can also prepare literature summaries, a data sheet and review slides there.</p></details>
+  <details class="q"><summary>Can a team register together?</summary><p>Yes. One student can enter all team members in one registration. Each person has their own roll number, email and phone, and the whole group uses one shared password. Each member must verify their email.</p></details>
+  <details class="q"><summary>Do I need an account?</summary><p>No. Anyone can check an idea as a guest, up to 3 checks an hour. A guest's checks are not saved and cannot be sent to a teacher. Students need an account to submit ideas and use the project workspace. Teachers register with an email and a recovery question. A teacher who forgets a password can reset it by answering the recovery question; a student asks the teacher to reset it.</p></details>
   <details class="q"><summary>Is the score exact?</summary><p>No. It is an estimate. Use it to compare ideas, and open the links yourself to check.</p></details>
   <details class="q"><summary>Where does my idea go?</summary><p>Your idea is sent to Google's Gemini AI and to paper and GitHub search. Your account and your checks are saved on this site's server. If you choose Send to teacher, your teacher sees your name, roll number and report. Your password is stored scrambled, never as plain text.</p></details>
-  <details class="q"><summary>Is it free?</summary><p>There is no sign-up. It uses your own free Gemini key, so the limits come from Google.</p></details>
+  <details class="q"><summary>Is it free?</summary><p>Registering costs nothing. It uses the site owner's free Gemini key, so the limits come from Google.</p></details>
   <details class="q"><summary>Can it replace my project guide?</summary><p>No. It helps you talk to your guide with proof. Your guide decides what is allowed.</p></details>
 </div>
 </div>
@@ -305,7 +343,7 @@ details.more summary,details.past summary{cursor:pointer;color:var(--blue);font-
     <main id="main" aria-live="polite"></main>
   </div>
 </div>
-<footer><div class="wrap">IdeaForge-X is a student project tool. Results are estimates. They do not replace your guide's advice. Teachers can review sent ideas in the <a href="/teacher">teacher view</a>. Built with Node.js, Express, the Gemini API, Semantic Scholar, arXiv and GitHub search.</div></footer>
+<footer><div class="wrap">IdeaForge-X is a student project tool. Results are estimates. They do not replace your guide's advice. Teachers can review sent ideas in the <a href="/teacher">teacher view</a>. Sources include research papers, GitHub, Hugging Face, Kaggle and Devpost search when available. <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></div></footer>
 
 <script>
 (function(){
@@ -375,6 +413,7 @@ function run(){
     var m=String(e.message||e),tip="Wait a minute and try again.";
     if(/please log in/i.test(m))tip="Your login has ended. Please log in again, then check your idea.";else if(/quota/i.test(m))tip="You used up the free Gemini limit for now. The daily limit resets once a day. Wait, or create a new API key, then try again.";else if(/503|429|demand/i.test(m))tip="Google's AI is busy right now. Wait a minute and check again.";
     else if(/too many checks|daily limit/i.test(m))tip="This site limits how many checks each person can run. Please try again later.";else if(/API key|403|401/i.test(m))tip="Check the GEMINI_API_KEY in your .env file, then restart the server.";
+    else if(/timed out|timedout|aborted/i.test(m))tip="A connected AI or search service took too long. Wait a moment and try again.";
     else if(/404/.test(m))tip="The AI model name is not available. Set GEMINI_MODEL in your .env file to a current model, then restart the server.";
     else if(/Failed to fetch|NetworkError/i.test(m))tip="The server is not running. Start it with npm start, then reload this page.";
     main.innerHTML='<div class="err"><b>The check did not finish.</b><br>'+esc(tip)+'<details style="margin-top:8px"><summary>Technical details</summary><small>'+esc(m)+'</small></details></div>';
@@ -429,38 +468,50 @@ function budgetPanel(x){
 }
 function sources(ev){
   var S=ev.sources;if(!S)return "";
-  var names=[["openAlex","OpenAlex"],["semanticScholar","Semantic Scholar"],["arxiv","arXiv"],["github","GitHub"]],good=[],bad=[];
+  var names=[["openAlex","OpenAlex"],["semanticScholar","Semantic Scholar"],["arxiv","arXiv"],["github","GitHub"],["huggingFace","Hugging Face"],["kaggle","Kaggle"],["devpost","Devpost"]],good=[],bad=[];
   names.forEach(function(k){(S[k[0]]?good:bad).push(k[1])});
   return ' Searched: '+(good.length?good.join(", "):"nothing")+'.'+(bad.length?' No answer from: '+bad.join(", ")+'.':'');
+}
+function archivePanel(a){
+  if(!a||!a.enabled)return "";
+  var title='<h2>Related projects from your college</h2>';
+  if(!a.total)return '<section class="panel">'+title+'<p class="hint" style="margin:0">The private archive is ready. It will grow as students opt in to share projects that their teachers approve.</p></section>';
+  if(!a.projects.length)return '<section class="panel">'+title+'<p class="hint" style="margin:0">No close matches among '+a.total+' approved, opted-in projects. Similarity is a review lead, not proof that an idea is new or copied.</p></section>';
+  return '<section class="panel">'+title+'<p class="hint" style="margin-top:0">Anonymous approved projects from invited faculty classes. Similarity uses meaning when embeddings are available and falls back to shared words.</p>'+(a.projects||[]).map(function(p){return '<div class="mut"><b>'+esc(p.className||"College project")+' · '+n(p.similarity)+'% '+(p.matchType==="semantic"?"meaning similarity":"word overlap")+'</b><p>'+esc(p.idea)+'</p>'+(p.tech?'<span class="m">Technologies: '+esc(p.tech)+'</span>':'')+'</div>'}).join("")+'</section>';
 }
 function show(x){
   var r=x.r,ev=r.evidence||{},v=V[r.verdict]||V["CHANGE IT"],o=n(r.originality);
   var delta=prevOrig!=null?'<span class="chg">Originality: '+prevOrig+'% before, '+o+'% now</span>':"";
   var papers=(ev.papers||[]).map(function(p){return '<li><a href="'+esc(p.url)+'" target="_blank" rel="noopener">'+esc(p.title)+'</a><small>'+esc(p.year||"")+(p.citationCount!=null?", cited "+esc(p.citationCount)+" times":"")+'</small></li>'}).join("")||'<li class="empty">No papers found for these search terms.</li>';
   var repos=(ev.repos||[]).map(function(p){return '<li><a href="'+esc(p.url)+'" target="_blank" rel="noopener">'+esc(p.name)+'</a><small>'+esc(p.stars)+' stars. '+esc(p.desc||"No description")+'</small></li>'}).join("");
-  var ghNote=ev.githubWorked?'About '+esc(ev.githubTotalRepos)+' GitHub repositories match these searches.':'GitHub search did not work, so this result uses papers and general knowledge only. Add GITHUB_TOKEN to your .env file to fix this.';
+  var extra=[].concat((ev.huggingface&&ev.huggingface.models||[]).map(function(p){return{label:"Hugging Face model",name:p.name,url:p.url,meta:(p.downloads||0)+" downloads"}}),(ev.huggingface&&ev.huggingface.datasets||[]).map(function(p){return{label:"Hugging Face dataset",name:p.name,url:p.url,meta:(p.downloads||0)+" downloads"}}),(ev.huggingface&&ev.huggingface.spaces||[]).map(function(p){return{label:"Hugging Face Space",name:p.name,url:p.url,meta:(p.likes||0)+" likes"}}),(ev.kaggle||[]).map(function(p){return{label:"Kaggle dataset",name:p.name,url:p.url,meta:p.desc||""}}),(ev.devpost||[]).map(function(p){return{label:"Devpost project",name:p.title,url:p.url,meta:""}}));
+  var extraList=extra.map(function(p){return '<li><a href="'+esc(p.url)+'" target="_blank" rel="noopener">'+esc(p.name)+'</a><small>'+esc(p.label)+(p.meta?" · "+esc(p.meta):"")+'</small></li>'}).join("");
+  var ghNote=ev.githubWorked?'About '+esc(ev.githubTotalRepos)+' GitHub repositories match these searches.':'GitHub search did not work. Add GITHUB_TOKEN to the server environment to improve GitHub coverage.';
   var html='<div class="res">'+recap(x)
   +'<section class="verdict '+v.c+'"><h2>'+v.t+'</h2><p>'+esc(r.verdict_reason)+'</p>'+delta+'</section>'
+  +archivePanel(r.campusArchive)
   +'<section class="panel"><h2>Scores</h2><div class="scores">'+metric("Originality",r.originality)+metric("Future scope",r.future_scope)+metric("Company interest",r.company_interest)+metric("Research value",r.research_value)
   +'<div class="sc"><span>Difficulty</span><span><span class="pill">'+esc(r.difficulty)+'</span></span><span></span></div></div>'
   +'<p class="note">Scores are estimates from the evidence below and the AI\'s judgement. Use them to compare ideas, not as exact measurements.</p></section>'
   +whyPanel(r,ev)+uniquePanel(r)
   +'<section class="panel"><h2>Three more unique versions</h2>'+(r.mutations||[]).map(function(m,i){return '<div class="mut"><b>'+esc(m.title)+'</b><p>'+esc(m.change)+'</p><span class="m">About '+n(m.new_originality)+'% original</span><span class="m">Difficulty: '+esc(m.difficulty)+'</span>'+(m.extra_cost?'<span class="m">'+esc(m.extra_cost)+'</span>':'')+'<button type="button" class="btn2" data-m="'+i+'">Check this version</button></div>'}).join("")+'</section>'
   +techPanel(r)+budgetPanel(x)+'<section class="panel"><h2>Evidence we found</h2><p class="hint" style="margin-top:0">'+ghNote+sources(ev)+' Search terms used: '+esc((r.queries||[]).join(", "))+'.</p>'
-  +'<div class="tabs" role="tablist"><button class="tab" role="tab" aria-selected="true" data-t="p">Research papers ('+(ev.papers||[]).length+')</button><button class="tab" role="tab" aria-selected="false" data-t="g">GitHub projects ('+(ev.repos||[]).length+')</button></div>'
-  +'<ul class="ev" id="evP">'+papers+'</ul><ul class="ev" id="evG" hidden>'+(repos||'<li class="empty">No GitHub projects to show.</li>')+'</ul></section>'
+  +'<div class="tabs" role="tablist"><button class="tab" role="tab" aria-selected="true" data-t="p">Research papers ('+(ev.papers||[]).length+')</button><button class="tab" role="tab" aria-selected="false" data-t="g">GitHub ('+(ev.repos||[]).length+')</button><button class="tab" role="tab" aria-selected="false" data-t="x">Hugging Face, Kaggle, Devpost ('+extra.length+')</button></div>'
+  +'<ul class="ev" id="evP">'+papers+'</ul><ul class="ev" id="evG" hidden>'+(repos||'<li class="empty">No GitHub projects to show.</li>')+'</ul><ul class="ev" id="evX" hidden>'+(extraList||'<li class="empty">No additional projects found. Kaggle results require KAGGLE_USERNAME and KAGGLE_KEY.</li>')+'</ul></section>'
   +sendPanel(x)+'<div class="acts"><button class="btn2" id="copy">Copy report</button><button class="btn2" id="dl">Download report</button><button class="btn2" id="pr">Print or save as PDF</button></div></div>';
   main.innerHTML=html;window.scrollTo(0,0);
 }
 main.addEventListener("click",function(e){
   var t=e.target;
   if(t.dataset.m!=null&&current){var m=current.r.mutations[t.dataset.m];prevOrig=n(current.r.originality);$("idea").value=m.title+". "+m.change;run()}
-  else if(t.dataset.t){main.querySelectorAll(".tab").forEach(function(b){b.setAttribute("aria-selected",b===t?"true":"false")});$("evP").hidden=t.dataset.t!=="p";$("evG").hidden=t.dataset.t!=="g"}
+  else if(t.dataset.t){main.querySelectorAll(".tab").forEach(function(b){b.setAttribute("aria-selected",b===t?"true":"false")});["P","G","X"].forEach(function(k){$("ev"+k).hidden=t.dataset.t!==k.toLowerCase()})}
   else if(t.id==="copy"&&current){var s=report(current),b=t;(navigator.clipboard?navigator.clipboard.writeText(s):Promise.reject()).then(function(){b.textContent="Copied"}).catch(function(){b.textContent="Copy failed, use Download"});setTimeout(function(){b.textContent="Copy report"},2000)}
   else if(t.id==="dl"&&current){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([report(current)],{type:"text/markdown"}));a.download="ideaforge-report.md";a.click()}
   else if(t.id==="pr")window.print();
+  else if(t.id==="archiveToggle"&&current){var targetSub=current.submission||(TEAM&&TEAM.submission);if(!targetSub)return;var opt=!targetSub.archiveOptedByMe;t.disabled=true;fetch("/api/my/submissions/"+encodeURIComponent(targetSub.id)+"/archive",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({archiveOptIn:opt})}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||"Could not update archive sharing");return d})}).then(function(d){if(current.submission&&current.submission.id===d.submission.id)current.submission=d.submission;if(TEAM&&TEAM.submission&&TEAM.submission.id===d.submission.id)TEAM.submission=d.submission;if(d.campusArchive)current.r.campusArchive=d.campusArchive;show(current)}).catch(function(er){alert(er.message);t.disabled=false})}
   else if(t.id==="sendTeacher"&&current)sendToTeacher(t);
 });
+main.addEventListener("change",function(e){if(e.target.name==="sendKind"){var consent=$("archiveOptIn");if(consent)consent.checked=e.target.dataset.archiveOpt==="1"}});
 function improvable(){
   var seen={},out=[];
   HIST.forEach(function(h){var s=h.submission;if(s&&s.status==="Needs change"&&s.latest===h.id&&!seen[s.id]){seen[s.id]=1;out.push(s)}});
@@ -475,13 +526,11 @@ function drawClass(){
   var box=$("classBox"),inner=$("classInner");
   if(!me||me.role!=="student"){box.hidden=true;return}
   box.hidden=false;box.open=!me.cls;
-  if(!me.cls){inner.innerHTML='<p class="hint" style="margin:8px 0 0">Your teacher has not added you to a class yet. Ask your teacher.</p>';return}
+  if(!me.cls){inner.innerHTML='<p class="hint" style="margin:8px 0 0">Your teacher has not connected your year, branch and section to a student group yet. Ask your teacher to select it in the dashboard.</p>';return}
   var t=TEAM&&TEAM.team?'<br>Your team: <b>'+esc(TEAM.team)+'</b> ('+TEAM.members.map(function(m){return esc(m.name)}).join(", ")+')'+(TEAM.submission?'. Team idea: <b>'+esc(TEAM.submission.status)+'</b>':''):'';
   inner.innerHTML='<p class="hint" style="margin:8px 0 0">You are in <b>'+esc(me.cls.name)+'</b>'+(me.cls.teacher?' with '+esc(me.cls.teacher):'')+'.'+t+'</p>';
 }
-function guestPanel(){
-  return '<section class="panel"><h2>Want to save this?</h2><p class="hint" style="margin-top:0">Students log in with their roll number to save their checks and send ideas to a teacher. Your teacher makes your account.</p><a class="btn2" href="/student" style="display:inline-block;text-decoration:none">Student login</a></section>';
-}
+function guestPanel(){return '<section class="panel" id="sendBox"><h2>Want to send this idea to your teacher?</h2><p class="hint" style="margin-top:0">This check is not saved because you are not logged in. Register or log in as a student, check the idea again, and then you can send it. <a href="/student#register">Register</a> &middot; <a href="/student">Student login</a></p></section>'}
 function sendPanel(x){
   if(!me)return guestPanel();
   if(me.role!=="student"||!x.id)return "";
@@ -489,23 +538,25 @@ function sendPanel(x){
   if(s){
     if(s.latest!==x.id)return '<section class="panel" id="sendBox"><h2>An older version</h2><p class="hint" style="margin-top:0">A newer version of this idea was sent to your teacher (round '+esc(s.round)+', now '+esc(s.status)+').</p></section>';
     var h='<section class="panel" id="sendBox"><h2>Sent to your teacher'+(s.round>1?' (round '+esc(s.round)+')':'')+'</h2><p style="margin:0 0 6px">Decision: <b>'+esc(s.status)+'</b></p>';
+    if(me.cls&&me.cls.institutionName&&(me.cls.institutionPremium||s.archiveOptedByMe))h+='<p class="hint">'+(s.archiveOptIn?'Shared anonymously in the college archive.':s.archiveOptedByMe?'You opted in; the project appears after every teammate also agrees and the teacher approves it.':'Not shared. Archive entries require each teammate’s opt-in and teacher approval.')+' <button type="button" class="btn2" id="archiveToggle">'+(s.archiveOptedByMe?'Withdraw my sharing consent':'Opt in to anonymous archive sharing')+'</button></p>';
     if(s.comment)h+='<p style="margin:0 0 6px">Teacher comment: '+esc(s.comment)+'</p>';
-    if(s.status==="Approved")h+='<p style="margin:0 0 6px"><a href="/letter?id='+encodeURIComponent(s.id)+'" target="_blank" rel="noopener">Open the approval letter</a></p>';
+    if(s.status==="Approved")h+='<p style="margin:0 0 6px"><a href="/letter?id='+encodeURIComponent(s.id)+'" target="_blank" rel="noopener">Open the approval letter</a> · <a href="/review-pack?id='+encodeURIComponent(s.id)+'" target="_blank" rel="noopener">Open project workspace: weekly updates, literature notes, data sheet and review slides</a></p>';
     if(s.status==="Needs change")h+='<p class="hint">To make a better version, choose <b>Check this version</b> on one of the suggestions above. Then send it as an improved version.</p>';
     return h+'</section>';
   }
-  if(!me.cls)return '<section class="panel" id="sendBox"><h2>Send this idea to your teacher</h2><p class="hint" style="margin-top:0">Your teacher has not added you to a class yet. Ask your teacher.</p></section>';
+  if(!me.cls)return '<section class="panel" id="sendBox"><h2>Send this idea to your teacher</h2><p class="hint" style="margin-top:0">Your teacher has not connected your year, branch and section to a student group yet. Ask your teacher to select it in the dashboard.</p></section>';
   var ts=TEAM&&TEAM.team&&TEAM.submission;
-  if(ts&&ts.status!=="Rejected"&&ts.status!=="Needs change")return '<section class="panel" id="sendBox"><h2>Your team already sent an idea</h2><p class="hint" style="margin-top:0">Team <b>'+esc(TEAM.team)+'</b> sent "'+esc(ts.idea)+'". Status: <b>'+esc(ts.status)+'</b>. A team sends one idea at a time.</p>'+(ts.status==="Approved"?'<p><a href="/letter?id='+encodeURIComponent(ts.id)+'" target="_blank" rel="noopener">Open the approval letter</a></p>':'')+'</section>';
+  if(ts&&ts.status!=="Rejected"&&ts.status!=="Needs change")return '<section class="panel" id="sendBox"><h2>Your team already sent an idea</h2><p class="hint" style="margin-top:0">Team <b>'+esc(TEAM.team)+'</b> sent "'+esc(ts.idea)+'". Status: <b>'+esc(ts.status)+'</b>. A team sends one idea at a time.</p>'+(me.cls&&me.cls.institutionName&&(me.cls.institutionPremium||ts.archiveOptedByMe)?'<p class="hint">'+(ts.archiveOptIn?'Shared anonymously in the college archive.':ts.archiveOptedByMe?'You opted in; every teammate must agree before it appears.':'Your team idea is not shared to the college archive.')+' <button type="button" class="btn2" id="archiveToggle">'+(ts.archiveOptedByMe?'Withdraw my sharing consent':'Opt in to anonymous archive sharing')+'</button></p>':'')+(ts.status==="Approved"?'<p><a href="/letter?id='+encodeURIComponent(ts.id)+'" target="_blank" rel="noopener">Open the approval letter</a> · <a href="/review-pack?id='+encodeURIComponent(ts.id)+'" target="_blank" rel="noopener">Open project workspace: weekly updates, literature notes, data sheet and review slides</a></p>':'')+'</section>';
   var imp=improvable(),opts="";
   var teamTxt=TEAM&&TEAM.team?', for team <b>'+esc(TEAM.team)+'</b> ('+TEAM.members.map(function(m){return esc(m.name)}).join(", ")+')':"";
-  if(imp.length)opts='<fieldset style="border:1px solid var(--line);border-radius:8px;margin:10px 0;padding:8px 12px"><legend class="hint">What is this?</legend><label style="display:block;font-weight:400"><input type="radio" name="sendKind" value="" checked> A new idea</label>'+imp.map(function(i){return '<label style="display:block;font-weight:400"><input type="radio" name="sendKind" value="'+esc(i.id)+'"> An improved version of: '+esc(i.idea)+'</label>'}).join("")+'</fieldset>';
-  return '<section class="panel" id="sendBox"><h2>Send this idea to your teacher</h2><p class="hint" style="margin-top:0">You will send it as <b>'+esc(me.name)+'</b> ('+esc(me.roll)+') in <b>'+esc(me.cls.name)+'</b>'+teamTxt+'. Your teacher sees this report, your scores and any similar ideas in your class.</p>'+opts+'<button type="button" class="btn" id="sendTeacher" style="width:auto;padding:11px 20px">Send to teacher</button><p class="hint" id="sendMsg" role="status"></p></section>';
+  if(imp.length)opts='<fieldset style="border:1px solid var(--line);border-radius:8px;margin:10px 0;padding:8px 12px"><legend class="hint">What is this?</legend><label style="display:block;font-weight:400"><input type="radio" name="sendKind" value="" data-archive-opt="0" checked> A new idea</label>'+imp.map(function(i){return '<label style="display:block;font-weight:400"><input type="radio" name="sendKind" value="'+esc(i.id)+'" data-archive-opt="'+(i.archiveOptedByMe?"1":"0")+'"> An improved version of: '+esc(i.idea)+'</label>'}).join("")+'</fieldset>';
+  var archiveOpt=me.cls.institutionName&&me.cls.institutionPremium?'<label style="display:flex;gap:8px;align-items:flex-start;font-weight:400;margin:10px 0"><input id="archiveOptIn" type="checkbox" style="width:auto;margin-top:5px"><span>If my teacher approves this idea, include its description anonymously in '+esc(me.cls.institutionName)+'’s private archive. For a team project, every teammate must opt in. My name, scores, comments and report stay private. I can withdraw later.</span></label>':me.cls.institutionName?'<p class="hint">The college archive pilot has ended. Ask your teacher about the college plan.</p>':'';
+  return '<section class="panel" id="sendBox"><h2>Send this idea to your teacher</h2><p class="hint" style="margin-top:0">You will send it as <b>'+esc(me.name)+'</b> ('+esc(me.roll)+') in <b>'+esc(me.cls.name)+'</b>'+teamTxt+'. Your teacher sees this report, your scores and any similar ideas in your class.</p>'+opts+archiveOpt+'<button type="button" class="btn" id="sendTeacher" style="width:auto;padding:11px 20px">Send to teacher</button><p class="hint" id="sendMsg" role="status"></p></section>';
 }
 function sendToTeacher(b){
   var msg=$("sendMsg"),k=document.querySelector('input[name="sendKind"]:checked'),rep=k?k.value:"";
   b.disabled=true;msg.textContent="Sending...";
-  fetch("/api/submit",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({checkId:current.id,replaces:rep||undefined})})
+  fetch("/api/submit",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({checkId:current.id,replaces:rep||undefined,archiveOptIn:!!($("archiveOptIn")&&$("archiveOptIn").checked)})})
   .then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||"Could not send");return d})})
   .then(function(d){current.submission=d.submission;return Promise.all([refreshHist(),loadTeam()])})
   .then(function(){$("sendBox").outerHTML=sendPanel(current)})
@@ -518,13 +569,13 @@ function report(x){
 function authUI(){
   var nu=$("navUser");
   if(!me)nu.innerHTML='<a href="/student">Student login</a> <a class="navbtn" href="/teacher/login">Teacher login</a>';
-  else nu.innerHTML=(me.role==="teacher"?'<a href="/teacher">Teacher dashboard</a> ':'')+'<span class="navhi">Hi, '+esc(me.name.split(" ")[0])+'</span> <button type="button" class="navbtn" id="logout">Log out</button>';
+  else nu.innerHTML=(me.role==="teacher"?'<a href="/teacher">Teacher dashboard</a> ':'')+'<a href="/account">Account</a> <span class="navhi">Hi, '+esc(me.name.split(" ")[0])+'</span> <button type="button" class="navbtn" id="logout">Log out</button>';
   var l=$("logout");if(l)l.onclick=function(){fetch("/api/auth/logout",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"}).then(function(){location.reload()})};
   var hb=$("histBox");if(hb&&me)hb.open=true;drawClass();
   $("loginNote").hidden=!!me;
 }
 drawHist();
-fetch("/api/me").then(function(r){return r.json()}).then(function(d){me=d.user;authUI();refreshHist();loadTeam()}).catch(function(){authUI()});
+fetch("/api/me").then(function(r){return r.json()}).then(function(d){me=d.user;if(me&&!me.termsAccepted){location.href="/consent";return}authUI();refreshHist();loadTeam()}).catch(function(){authUI()});
 })();
 </script>
 </body>

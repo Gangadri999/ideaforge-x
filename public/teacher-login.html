@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Teacher login | IdeaForge-X</title>
 <style>
+:root{color-scheme:light}
 :root{--ink:#14213d;--mu:#5b6b82;--paper:#eef2f7;--panel:#fff;--line:#d5dde8;--blue:#0f766e;--blue-soft:#d9f3ef;--drop:#b83232;--drop-bg:#fbe6e6;--ok:#0f8a5f;--side:#0d3b3a}
-@media (prefers-color-scheme:dark){:root{--ink:#e8edf6;--mu:#9aa9bf;--paper:#0f1623;--panel:#172033;--line:#2b3850;--blue:#5eead4;--blue-soft:#1f2c4d;--drop:#ef7b7b;--drop-bg:#3b1a1a;--ok:#4cc38a}}
+
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0;min-height:100vh;background:var(--paper);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif;display:grid;grid-template-columns:1fr 1fr}
@@ -25,7 +27,7 @@ h1{font:700 28px/1.2 Georgia,serif;margin:0 0 4px}
 .sub{color:var(--mu);margin:0 0 18px}
 .form{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
 label{display:block;font-weight:600;font-size:14px;margin:12px 0 5px}label:first-child{margin-top:0}
-input[type=text],input[type=email],input[type=password]{width:100%;font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:11px}
+input[type=text],input[type=email],input[type=password],select{width:100%;font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:11px}
 :focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 .hint{font-size:13px;color:var(--mu);margin:6px 0 0}
 .show{display:flex;align-items:center;gap:6px;font-size:14px;margin-top:8px;color:var(--mu);font-weight:400}
@@ -36,15 +38,28 @@ input[type=text],input[type=email],input[type=password]{width:100%;font:inherit;
 .links{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:18px;font-size:14px}
 .links a{color:var(--blue)}
 .linkbtn{font:inherit;background:none;border:0;color:var(--blue);text-decoration:underline;cursor:pointer;padding:0}
+/* Mobile-first faculty portal styling */
+body{display:block;min-height:100vh;padding:28px 16px 48px;background:#eef2f7;color:#14213d}
+.side{display:none}.main{min-height:calc(100vh - 76px);padding:0;align-items:flex-start}
+.card{max-width:560px;margin:0 auto}.mbrand{display:block;color:#14213d;margin:0 0 14px}.mbrand b{color:#2457ff}
+h1{color:#14213d;font:700 30px/1.2 "Segoe UI",system-ui,sans-serif}.sub{color:#5b6b82}.hint{color:#5b6b82}
+.form{background:#fff;border:1px solid #d5dde8;border-radius:18px;padding:24px;box-shadow:0 16px 42px rgba(15,27,61,.09)}
+label{color:#14213d}input[type=text],input[type=email],input[type=password],input[type=tel],select{color:#14213d;background:#eef2f7;border:1px solid #d5dde8;border-radius:10px;padding:13px 15px;min-height:50px}input::placeholder{color:#8090a6}
+.go{background:#2457ff;border-radius:10px;padding:14px;box-shadow:0 7px 18px rgba(36,87,255,.18)}
+#googleRegister,#googleLogin{background:#fff;color:#14213d;box-shadow:none;border:1px solid #d5dde8}
+.err{background:#fbe6e6;color:#14213d;border-color:#b83232}.note{background:#e6ecff;color:#14213d}.links{color:#5b6b82}.links a,.linkbtn{color:#2457ff}
+.role-banner{border-radius:20px;padding:24px 20px;margin:12px 0 22px;text-align:center;color:#fff;background:linear-gradient(120deg,#0f1b3d,#2457ff);box-shadow:0 12px 30px rgba(15,27,61,.18)}
+.role-banner .symbol{font-size:38px;line-height:1.1}.role-banner h2{font-size:25px;margin:8px 0 2px}.role-banner p{margin:0;color:#dbe5ff}
+@media(max-width:520px){body{padding:20px 14px 32px}.form{padding:20px;border-radius:18px}.role-banner{border-radius:24px;padding:22px 14px}.links{justify-content:center}}
 </style>
 </head>
 <body>
 <aside class="side">
   <p class="brand">Idea<b>Forge</b>-X</p>
   <span class="pill">For teachers</span>
-  <h2>Review ideas. Guide your class.</h2>
-  <p>Log in with your email. The site admin made your account, so there is nothing to sign up for.</p>
-  <ol><li>Log in with your email and the temporary password from the admin</li><li>Set your own password</li><li>Create a class and add your students by roll number</li><li>Review the ideas they send and give decisions</li></ol>
+  <h2>Guide projects from idea to final review.</h2>
+  <p>Review student ideas, choose the groups you teach, and help each team make steady progress.</p>
+  <ol><li>Enter your teacher details</li><li>Create a password and recovery question</li><li>Open your dashboard</li><li>Review ideas and reply to weekly updates</li></ol>
 </aside>
 
 <main class="main">
@@ -60,7 +75,7 @@ input[type=text],input[type=email],input[type=password]{width:100%;font:inherit;
 
     <section id="loginBox">
       <h1>Teacher login</h1>
-      <p class="sub">Use your email and password.</p>
+      <p class="sub">Use your email and password. New here? <button type="button" class="linkbtn" id="toReg">Register</button></p>
       <form class="form" id="form" novalidate>
         <label for="uid">Email</label>
         <input id="uid" type="email" autocomplete="username" autocapitalize="none" spellcheck="false">
@@ -68,9 +83,57 @@ input[type=text],input[type=email],input[type=password]{width:100%;font:inherit;
         <input id="pw" type="password" autocomplete="current-password">
         <label class="show"><input type="checkbox" id="showPw"> Show password</label>
         <button class="go" id="submit" type="submit">Log in</button>
+        <a class="go" id="googleLogin" style="display:block;text-align:center;text-decoration:none;margin-top:8px" href="#">Continue with Google</a>
+        <p class="hint" id="googleLoginHint" hidden></p>
         <div class="err" id="err" role="alert" hidden></div>
       </form>
-      <div class="links"><span>Forgot your password? Ask the site admin to reset it.</span><a href="/student">Student login</a></div>
+      <div class="links"><button type="button" class="linkbtn" id="toForgot">Forgot your password?</button><a href="/student">Student login</a></div>
+    </section>
+
+    <section id="regBox" hidden>
+      <div class="role-banner"><div class="symbol" aria-hidden="true">▣</div><h2>Faculty Portal</h2><p>Create your educator profile</p></div>
+      <h1 id="rheading">Teacher sign-up</h1>
+      <p class="hint" id="regNote">Enter your details and create your account. No email confirmation is needed.</p>
+      <p class="sub">Already registered? <button type="button" class="linkbtn" id="toLogin">Log in</button></p>
+      <form class="form" id="rform" novalidate>
+        <label for="rname">Your name</label><input id="rname" type="text" autocomplete="name" maxlength="80">
+        <label for="remployee">Employee ID</label><input id="remployee" type="text" autocomplete="off" maxlength="40">
+        <label for="remail">Email address</label><input id="remail" type="email" autocomplete="email" maxlength="120">
+        <label for="rphone">Contact number</label><input id="rphone" type="tel" autocomplete="tel" maxlength="20" placeholder="e.g. +91 98765 43210">
+        <label for="rdepartment">Department</label><input id="rdepartment" type="text" maxlength="80" placeholder="e.g. Computer Science">
+        <label for="rdesignation">Designation</label><select id="rdesignation"><option value="">Choose designation</option><option>Assistant Professor</option><option>Associate Professor</option><option>Professor</option><option>Lecturer</option><option>Other</option></select>
+        <label for="rpw">Choose a password</label><input id="rpw" type="password" autocomplete="new-password"><p class="hint">At least 8 characters.</p>
+        <label for="rpw2">Type the password again</label><input id="rpw2" type="password" autocomplete="new-password">
+        <label for="rq">Recovery question</label><select id="rq"></select>
+        <label for="ra">Your answer</label><input id="ra" type="text" autocomplete="off" maxlength="100"><p class="hint">Use this if you forget your password.</p>
+        <label class="show"><input type="checkbox" id="termsAccept"> I have read and agree to the <a href="/privacy" target="_blank" rel="noopener">Privacy notice</a> and <a href="/terms" target="_blank" rel="noopener">Terms</a>.</label>
+        <button class="go" id="rsubmit" type="submit">Create teacher account</button>
+        <a class="go" id="googleRegister" style="display:block;text-align:center;text-decoration:none;margin-top:8px" href="#">Sign up with Google</a>
+        <p class="hint" id="googleRegisterHint" hidden></p>
+        <div class="err" id="rerr" role="alert" hidden></div>
+      </form>
+    </section>
+
+
+    <section id="forgotBox" hidden>
+      <h1>Forgot your password?</h1>
+      <p class="sub">Answer your recovery question to set a new password. <button type="button" class="linkbtn" id="fBack">Back to login</button></p>
+      <form class="form" id="fform" novalidate>
+        <label for="fe">Your email</label>
+        <input id="fe" type="email" autocomplete="username">
+        <button class="go" id="fnext" type="button" style="margin-top:10px">Show my question</button>
+        <div id="fstep" hidden>
+          <label id="fq" for="fa" style="margin-top:16px"></label>
+          <input id="fa" type="text" autocomplete="off">
+          <label for="fn1">New password</label>
+          <input id="fn1" type="password" autocomplete="new-password">
+          <p class="hint">At least 8 characters.</p>
+          <label for="fn2">Type the new password again</label>
+          <input id="fn2" type="password" autocomplete="new-password">
+          <button class="go" id="fsubmit" type="submit">Set new password</button>
+        </div>
+        <div class="err" id="ferr" role="alert" hidden></div>
+      </form>
     </section>
 
     <section id="changeBox" hidden>
@@ -88,19 +151,55 @@ input[type=text],input[type=email],input[type=password]{width:100%;font:inherit;
         <div class="err" id="cerr" role="alert" hidden></div>
       </form>
     </section>
-    <div class="links"><a href="/">Back to home</a></div>
+    <div class="links"><a href="/">Back to home</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></div>
   </div>
 </main>
 
 <script>
 (function(){
 var $=function(i){return document.getElementById(i)};
-var PORTAL="teacher",DEST="/teacher",user=null;
+var PORTAL="teacher",DEST="/teacher",user=null,googleEnabled=false;
 function fail(id,m){var e=$(id);e.textContent=m;e.hidden=false}
 function net(e){return /Failed to fetch|NetworkError/i.test(e.message)?"Cannot reach the server. Check that it is running.":e.message}
 var JH={"Content-Type":"application/json"};
 function post(u,b){return fetch(u,{method:"POST",headers:JH,body:JSON.stringify(b||{})}).then(function(r){return r.json().then(function(d){if(!r.ok){var e=new Error(d.error||"Something went wrong");e.data=d;throw e}return d})})}
-function toChange(pw){$("loginBox").hidden=true;$("already").hidden=true;$("changeBox").hidden=false;if(pw)$("cur").value=pw;$((pw?"np":"cur")).focus()}
+function show(id){["loginBox","regBox","forgotBox","changeBox","already"].forEach(function(k){$(k).hidden=k!==id})}
+$("toReg").onclick=function(){show("regBox");$("rname").focus()};
+$("toLogin").onclick=function(){show("loginBox")};
+$("toForgot").onclick=function(){$("fe").value=$("uid").value;$("fstep").hidden=true;$("fnext").hidden=false;$("ferr").hidden=true;show("forgotBox");$("fe").focus()};
+$("fBack").onclick=function(){show("loginBox")};
+fetch("/api/auth/options").then(function(r){return r.json()}).then(function(o){
+  $("rq").innerHTML=o.questions.map(function(q,i){return '<option value="'+i+'">'+q.replace(/&/g,"&amp;").replace(/</g,"&lt;")+'</option>'}).join("");
+  googleEnabled=!!o.google;
+  $("googleLoginHint").hidden=googleEnabled;$("googleRegisterHint").hidden=googleEnabled;
+  if(!googleEnabled){$("googleLoginHint").textContent="To use Google sign-in, configure GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in .env.";$("googleRegisterHint").textContent="Google sign-up needs GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in .env.";}
+
+}).catch(function(){});
+$("rform").addEventListener("submit",function(ev){
+  ev.preventDefault();$("rerr").hidden=true;
+  var b={name:$("rname").value.trim(),email:$("remail").value.trim(),employeeId:$("remployee").value.trim(),phone:$("rphone").value.trim(),department:$("rdepartment").value.trim(),designation:$("rdesignation").value,password:$("rpw").value,passwordConfirm:$("rpw2").value,question:Number($("rq").value),answer:$("ra").value.trim(),termsAccepted:$("termsAccept").checked};
+  if(b.password.length<8){fail("rerr","Use a password with at least 8 characters.");return}
+  if(b.password!==b.passwordConfirm){fail("rerr","The two passwords are not the same.");return}
+  if(!b.termsAccepted){fail("rerr","Accept the privacy notice and terms first.");return}
+  var btn=$("rsubmit");btn.disabled=true;btn.textContent="Creating account...";
+  post("/api/auth/register-teacher",b).then(function(){location.href=DEST}).catch(function(e){fail("rerr",net(e));btn.disabled=false;btn.textContent="Create teacher account"});
+});
+$("googleRegister").onclick=function(e){e.preventDefault();if(!$("termsAccept").checked){fail("rerr","Accept the privacy notice and terms first.");return}post("/api/auth/google/prepare",{role:"teacher",name:$("rname").value.trim(),employeeId:$("remployee").value.trim(),phone:$("rphone").value.trim(),department:$("rdepartment").value.trim(),designation:$("rdesignation").value,termsAccepted:$("termsAccept").checked}).then(function(d){location.href=d.url}).catch(function(er){fail("rerr",net(er))})};
+$("googleLogin").onclick=function(e){e.preventDefault();if(!googleEnabled){fail("err","Google sign-in is not configured. Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to .env, then restart the app.");return}location.href="/api/auth/google/start?role=teacher"};
+$("fnext").onclick=function(){
+  $("ferr").hidden=true;var e=$("fe").value.trim();
+  if(!e){fail("ferr","Enter your email.");return}
+  post("/api/auth/forgot/question",{email:e}).then(function(d){$("fq").textContent=d.question;$("fstep").hidden=false;$("fnext").hidden=true;$("fa").focus()}).catch(function(er){fail("ferr",net(er))});
+};
+$("fform").addEventListener("submit",function(ev){
+  ev.preventDefault();$("ferr").hidden=true;
+  var n1=$("fn1").value;
+  if(n1.length<8){fail("ferr","Use a password with at least 8 characters.");return}
+  if(n1!==$("fn2").value){fail("ferr","The two new passwords are not the same.");return}
+  var btn=$("fsubmit");btn.disabled=true;
+  post("/api/auth/forgot/reset",{email:$("fe").value.trim(),answer:$("fa").value,newPassword:n1}).then(function(){$("uid").value=$("fe").value.trim();$("pw").value="";show("loginBox");$("err").hidden=true;var m=$("err");m.textContent="Password changed. Log in with your new password.";m.hidden=false;m.style.borderColor="var(--ok)"}).catch(function(e){fail("ferr",net(e))}).then(function(){btn.disabled=false});
+});
+function toChange(pw){show("changeBox");if(pw)$("cur").value=pw;$((pw?"np":"cur")).focus()}
 
 $("showPw").onchange=function(){$("pw").type=this.checked?"text":"password"};
 $("form").addEventListener("submit",function(ev){
@@ -121,14 +220,18 @@ $("cform").addEventListener("submit",function(ev){
   var b=$("csubmit");b.disabled=true;
   post("/api/auth/change-password",{current:cur,newPassword:n1}).then(function(){location.href=DEST}).catch(function(e){fail("cerr",net(e));b.disabled=false});
 });
+var params=new URLSearchParams(location.search);
+if(location.hash==="#register")show("regBox");
+var authError=params.get("authError");if(authError==="consent"){show("regBox");fail("rerr","Accept the privacy notice and terms first.")}else if(authError)fail("err","Google sign-in did not finish. Check the server configuration and try again.");
 $("out").onclick=function(){post("/api/auth/logout").then(function(){location.reload()})};
 $("cont").onclick=function(){location.href=DEST};
 fetch("/api/me").then(function(r){return r.json()}).then(function(d){
   if(!d.user)return;
   user=d.user;
-  if(d.user.role!==PORTAL){$("who").textContent="You are logged in as "+d.user.name+" ("+d.user.role+"). To use this login, log out first.";$("loginBox").hidden=true;$("already").hidden=false;$("cont").hidden=true;return}
+  
+  if(d.user.role!==PORTAL){$("who").textContent="You are logged in as "+d.user.name+" ("+d.user.role+"). To use this login, log out first.";show("already");$("cont").hidden=true;return}
   if(d.user.mustChange){toChange("");return}
-  $("loginBox").hidden=true;$("already").hidden=false;$("who").textContent=d.user.name;
+  show("already");$("who").textContent=d.user.name;
 }).catch(function(){});
 })();
 </script>

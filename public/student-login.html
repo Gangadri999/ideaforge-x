@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Student login | IdeaForge-X</title>
 <style>
+:root{color-scheme:light}
 :root{--ink:#14213d;--mu:#5b6b82;--paper:#eef2f7;--panel:#fff;--line:#d5dde8;--blue:#2457ff;--blue-soft:#e6ecff;--drop:#b83232;--drop-bg:#fbe6e6;--ok:#0f8a5f;--side:#0f1b3d}
-@media (prefers-color-scheme:dark){:root{--ink:#e8edf6;--mu:#9aa9bf;--paper:#0f1623;--panel:#172033;--line:#2b3850;--blue:#7b9bff;--blue-soft:#1f2c4d;--drop:#ef7b7b;--drop-bg:#3b1a1a;--ok:#4cc38a}}
+
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0;min-height:100vh;background:var(--paper);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif;display:grid;grid-template-columns:1fr 1fr}
@@ -25,7 +27,7 @@ h1{font:700 28px/1.2 Georgia,serif;margin:0 0 4px}
 .sub{color:var(--mu);margin:0 0 18px}
 .form{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
 label{display:block;font-weight:600;font-size:14px;margin:12px 0 5px}label:first-child{margin-top:0}
-input[type=text],input[type=email],input[type=password]{width:100%;font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:11px}
+input[type=text],input[type=email],input[type=password],select{width:100%;font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:11px}
 :focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 .hint{font-size:13px;color:var(--mu);margin:6px 0 0}
 .show{display:flex;align-items:center;gap:6px;font-size:14px;margin-top:8px;color:var(--mu);font-weight:400}
@@ -36,6 +38,21 @@ input[type=text],input[type=email],input[type=password]{width:100%;font:inherit;
 .links{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:18px;font-size:14px}
 .links a{color:var(--blue)}
 .linkbtn{font:inherit;background:none;border:0;color:var(--blue);text-decoration:underline;cursor:pointer;padding:0}
+/* Mobile-first student portal styling */
+body{display:block;min-height:100vh;padding:28px 16px 48px;background:#eef2f7;color:#14213d}
+.side{display:none}.main{min-height:calc(100vh - 76px);padding:0;align-items:flex-start}
+.card{max-width:560px;margin:0 auto}.mbrand{display:block;color:#14213d;margin:0 0 14px}.mbrand b{color:#2457ff}
+h1{color:#14213d;font:700 30px/1.2 "Segoe UI",system-ui,sans-serif}.sub{color:#5b6b82}.hint{color:#5b6b82}
+.form{background:#fff;border:1px solid #d5dde8;border-radius:18px;padding:24px;box-shadow:0 16px 42px rgba(15,27,61,.09)}
+label{color:#14213d}input[type=text],input[type=email],input[type=password],input[type=tel],select{color:#14213d;background:#eef2f7;border:1px solid #d5dde8;border-radius:10px;padding:13px 15px;min-height:50px}input::placeholder{color:#8090a6}
+.go{background:#2457ff;border-radius:10px;padding:14px;box-shadow:0 7px 18px rgba(36,87,255,.18)}
+#googleRegister,#googleLogin{background:#fff;color:#14213d;box-shadow:none;border:1px solid #d5dde8}
+.err{background:#fbe6e6;color:#14213d;border-color:#b83232}.note{background:#e6ecff;color:#14213d}.links{color:#5b6b82}.links a,.linkbtn{color:#2457ff}
+.role-banner{border-radius:20px;padding:24px 20px;margin:12px 0 22px;text-align:center;color:#fff;background:linear-gradient(120deg,#0f1b3d,#2457ff);box-shadow:0 12px 30px rgba(15,27,61,.18)}
+.role-banner .symbol{font-size:38px;line-height:1.1}.role-banner h2{font-size:25px;margin:8px 0 2px}.role-banner p{margin:0;color:#dbe5ff}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field-row label{margin-top:12px}
+.group-member{border:1px solid #d5dde8;border-radius:12px;padding:16px;margin:12px 0;background:#f8faff}.group-member h3{margin:0;color:#14213d;font-size:16px}.group-member button{margin-top:10px}
+@media(max-width:520px){body{padding:20px 14px 32px}.form{padding:20px;border-radius:18px}.role-banner{border-radius:24px;padding:22px 14px}.links{justify-content:center}}
 </style>
 </head>
 <body>
@@ -43,8 +60,8 @@ input[type=text],input[type=email],input[type=password]{width:100%;font:inherit;
   <p class="brand">Idea<b>Forge</b>-X</p>
   <span class="pill">For students</span>
   <h2>Check your idea. Send it to your teacher.</h2>
-  <p>Log in with your roll number. Your teacher made your account, so there is nothing to sign up for.</p>
-  <ol><li>Log in with your roll number and the temporary password from your teacher</li><li>Set your own password</li><li>Check ideas and send them to your teacher</li><li>See the decision and send a better version</li></ol>
+  <p>Register with your roll number and academic details. You can check ideas straight away.</p>
+  <ol><li>Register with your academic details</li><li>Your teacher connects your group from the dashboard</li><li>Check ideas and send them to your teacher</li><li>See the decision and send a better version</li></ol>
 </aside>
 
 <main class="main">
@@ -60,7 +77,7 @@ input[type=text],input[type=email],input[type=password]{width:100%;font:inherit;
 
     <section id="loginBox">
       <h1>Student login</h1>
-      <p class="sub">Use your roll number and password.</p>
+      <p class="sub">Use your roll number and password. New here? <button type="button" class="linkbtn" id="toReg">Register</button></p>
       <form class="form" id="form" novalidate>
         <label for="uid">Roll number</label>
         <input id="uid" type="text" autocomplete="username" autocapitalize="none" spellcheck="false">
@@ -68,10 +85,56 @@ input[type=text],input[type=email],input[type=password]{width:100%;font:inherit;
         <input id="pw" type="password" autocomplete="current-password">
         <label class="show"><input type="checkbox" id="showPw"> Show password</label>
         <button class="go" id="submit" type="submit">Log in</button>
+        <a class="go" id="googleLogin" style="display:block;text-align:center;text-decoration:none;margin-top:8px" href="/api/auth/google/start?role=student">Continue with Google</a>
+        <p class="hint" id="googleLoginHint" hidden></p>
         <div class="err" id="err" role="alert" hidden></div>
       </form>
       <div class="links"><span>Forgot your password? Ask your teacher to reset it.</span><a href="/teacher/login">Teacher login</a></div>
     </section>
+
+    <section id="regBox" hidden>
+      <div class="role-banner"><div class="symbol" aria-hidden="true">▱</div><h2>Academic Profile</h2><p>Join the student community</p></div>
+      <h1>Student register</h1>
+      <p class="hint" id="regNote">Create an account and start using the student workspace right away.</p>
+      <p class="sub">Already registered? <button type="button" class="linkbtn" id="toLogin">Log in</button></p>
+      <form class="form" id="rform" novalidate>
+        <label for="rname">Your name</label>
+        <input id="rname" type="text" autocomplete="name" maxlength="80">
+        <label for="rroll">Roll number</label>
+        <input id="rroll" type="text" autocapitalize="none" spellcheck="false" maxlength="40">
+        <p class="hint">You will log in with this.</p>
+        <label for="remail">Email address</label>
+        <input id="remail" type="email" autocomplete="email" maxlength="120">
+        <label for="rphone">Phone number</label>
+        <input id="rphone" type="tel" autocomplete="tel" maxlength="20" placeholder="e.g. +91 98765 43210">
+        <div class="field-row">
+          <div><label for="ryear">Year</label><select id="ryear"><option value="">Choose year</option><option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option><option>PG</option></select></div>
+          <div><label for="rbranch">Branch</label><input id="rbranch" type="text" maxlength="60" list="branches" placeholder="Choose or type branch"><datalist id="branches"><option>CSE</option><option>ECE</option><option>EEE</option><option>IT</option><option>Mechanical</option><option>Civil</option></datalist></div>
+        </div>
+        <label for="rsection">Section</label>
+        <input id="rsection" type="text" maxlength="20" list="sections" placeholder="Choose or type section"><datalist id="sections"><option>A</option><option>B</option><option>C</option><option>D</option></datalist>
+        <p class="hint">Your teacher will connect your year, branch and section to the right student group from their dashboard.</p>
+        <label class="show"><input type="checkbox" id="groupMode"> Register a group or batch together</label>
+        <div id="groupFields" hidden>
+          <label for="rteam">Group / team name</label>
+          <input id="rteam" type="text" maxlength="60" placeholder="e.g. Team Innovators">
+          <p class="hint">Add each member’s name, roll number, email and phone. The whole group shares one password.</p>
+          <div id="groupMembers"></div>
+          <button type="button" class="linkbtn" id="addGroupMember">+ Add another member</button>
+        </div>
+        <label for="rpw">Choose a password</label>
+        <input id="rpw" type="password" autocomplete="new-password">
+        <p class="hint" id="passwordHint">At least 8 characters.</p>
+        <label for="rpw2">Type the password again</label>
+        <input id="rpw2" type="password" autocomplete="new-password">
+        <label class="show"><input type="checkbox" id="termsAccept"> I have read and agree to the <a href="/privacy" target="_blank" rel="noopener">Privacy notice</a> and <a href="/terms" target="_blank" rel="noopener">Terms</a>.</label>
+        <button class="go" id="rsubmit" type="submit">Register and continue</button>
+        <a class="go" id="googleRegister" style="display:block;text-align:center;text-decoration:none;margin-top:8px" href="#">Register with Google</a>
+        <p class="hint" id="googleRegisterHint" hidden></p>
+        <div class="err" id="rerr" role="alert" hidden></div>
+      </form>
+    </section>
+
 
     <section id="changeBox" hidden>
       <h1>Set your own password</h1>
@@ -88,7 +151,7 @@ input[type=text],input[type=email],input[type=password]{width:100%;font:inherit;
         <div class="err" id="cerr" role="alert" hidden></div>
       </form>
     </section>
-    <div class="links"><a href="/">Back to home</a></div>
+    <div class="links"><a href="/">Back to home</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></div>
   </div>
 </main>
 
@@ -100,9 +163,37 @@ function fail(id,m){var e=$(id);e.textContent=m;e.hidden=false}
 function net(e){return /Failed to fetch|NetworkError/i.test(e.message)?"Cannot reach the server. Check that it is running.":e.message}
 var JH={"Content-Type":"application/json"};
 function post(u,b){return fetch(u,{method:"POST",headers:JH,body:JSON.stringify(b||{})}).then(function(r){return r.json().then(function(d){if(!r.ok){var e=new Error(d.error||"Something went wrong");e.data=d;throw e}return d})})}
-function toChange(pw){$("loginBox").hidden=true;$("already").hidden=true;$("changeBox").hidden=false;if(pw)$("cur").value=pw;$((pw?"np":"cur")).focus()}
+function show(id){["loginBox","regBox","changeBox","already"].forEach(function(k){$(k).hidden=k!==id})}
+function esc(t){var d=document.createElement("div");d.textContent=t==null?"":String(t);return d.innerHTML}
+$("toReg").onclick=function(){show("regBox");$("rname").focus()};
+$("toLogin").onclick=function(){show("loginBox")};
+var groupMode=$("groupMode"),groupMembers=$("groupMembers");
+groupMode.onchange=function(){ $("groupFields").hidden=!this.checked;$("googleRegister").hidden=this.checked;$("googleRegisterHint").hidden=!this.checked;$("passwordHint").textContent=this.checked?"At least 8 characters. This one password is shared by all group members.":"At least 8 characters.";if(this.checked){$("googleRegisterHint").textContent="Google sign-up supports one student at a time. Use the form above for group registration.";if(!groupMembers.children.length)addGroupMember()} };
+function addGroupMember(){
+  if(groupMembers.children.length>=9){fail("rerr","A single group registration can include up to 10 students.");return}
+  var n=groupMembers.children.length+2,box=document.createElement("div");box.className="group-member";
+  box.innerHTML='<h3>Member '+n+'</h3><label>Name</label><input class="gm-name" type="text" maxlength="80" autocomplete="name"><label>Roll number</label><input class="gm-roll" type="text" maxlength="40"><label>Email</label><input class="gm-email" type="email" maxlength="120" autocomplete="email"><label>Phone number</label><input class="gm-phone" type="tel" maxlength="20" autocomplete="tel"><button type="button" class="linkbtn gm-remove">Remove this member</button>';
+  box.querySelector(".gm-remove").onclick=function(){box.remove();Array.prototype.forEach.call(groupMembers.children,function(el,i){el.querySelector("h3").textContent="Member "+(i+2)})};groupMembers.appendChild(box);
+}
+$("addGroupMember").onclick=addGroupMember;
+$("rform").addEventListener("submit",function(ev){
+  ev.preventDefault();$("rerr").hidden=true;
+  var b={name:$("rname").value.trim(),roll:$("rroll").value.trim(),phone:$("rphone").value.trim(),year:$("ryear").value,branch:$("rbranch").value.trim(),section:$("rsection").value.trim(),email:$("remail").value.trim(),password:$("rpw").value,team:groupMode.checked?$("rteam").value.trim():"",termsAccepted:$("termsAccept").checked};
+  if(b.name.length<2){fail("rerr","Enter your name.");return}
+  if(!b.roll){fail("rerr","Enter your roll number.");return}
+  if(!b.phone||!b.year||!b.branch||!b.section){fail("rerr","Enter your phone number, year, branch and section.");return}
+  if(b.password.length<8){fail("rerr","Use a password with at least 8 characters.");return}
+  if(b.password!==$("rpw2").value){fail("rerr","The two passwords are not the same.");return}
+  var endpoint="/api/auth/register-student";
+  if(groupMode.checked){var members=[{name:b.name,roll:b.roll,email:b.email,phone:b.phone}];Array.prototype.forEach.call(groupMembers.children,function(el){members.push({name:el.querySelector(".gm-name").value.trim(),roll:el.querySelector(".gm-roll").value.trim(),email:el.querySelector(".gm-email").value.trim(),phone:el.querySelector(".gm-phone").value.trim()})});if(!b.team||members.length<2){fail("rerr","Enter a group name and add at least one more member.");return}for(var i=0;i<members.length;i++){if(members[i].name.length<2||!members[i].roll||!members[i].email||!members[i].phone){fail("rerr","Complete every member’s name, roll number, email and phone number.");return}}b.members=members;b.passwordConfirm=$("rpw2").value;endpoint="/api/auth/register-student-batch"}
+  var btn=$("rsubmit");btn.disabled=true;btn.textContent="Please wait...";
+  post(endpoint,b).then(function(){location.href=DEST}).catch(function(e){fail("rerr",net(e))}).then(function(){btn.disabled=false;btn.textContent="Register and continue"});
+});
+$("googleRegister").onclick=function(e){e.preventDefault();if(!$("termsAccept").checked){fail("rerr","Accept the privacy notice and terms first.");return}post("/api/auth/google/prepare",{role:"student",name:$("rname").value.trim(),roll:$("rroll").value.trim(),phone:$("rphone").value.trim(),year:$("ryear").value,branch:$("rbranch").value.trim(),section:$("rsection").value.trim(),team:"",termsAccepted:$("termsAccept").checked}).then(function(d){location.href=d.url}).catch(function(er){fail("rerr",net(er))})};
+function toChange(pw){show("changeBox");if(pw)$("cur").value=pw;$((pw?"np":"cur")).focus()}
 
 $("showPw").onchange=function(){$("pw").type=this.checked?"text":"password"};
+
 $("form").addEventListener("submit",function(ev){
   ev.preventDefault();$("err").hidden=true;
   var id=$("uid").value.trim(),pw=$("pw").value;
@@ -121,14 +212,18 @@ $("cform").addEventListener("submit",function(ev){
   var b=$("csubmit");b.disabled=true;
   post("/api/auth/change-password",{current:cur,newPassword:n1}).then(function(){location.href=DEST}).catch(function(e){fail("cerr",net(e));b.disabled=false});
 });
+if(location.hash==="#register")show("regBox");
+fetch("/api/auth/options").then(function(r){return r.json()}).then(function(o){if(!o.google){$("googleLoginHint").textContent="Google sign-in is not configured yet. The app owner must add Google OAuth credentials.";$("googleLoginHint").hidden=false;$("googleRegisterHint").textContent="Google sign-up needs Google OAuth credentials in the app settings.";$("googleRegisterHint").hidden=false}}).catch(function(){});
+var authError=new URLSearchParams(location.search).get("authError");if(authError==="register"){show("regBox");fail("rerr","Complete your academic profile, then try Google sign-up again.")}else if(authError)fail("err",authError==="exists"?"That roll number already exists. Log in with the current account.":authError==="capacity"?"The college plan is out of student seats. Ask your archive owner.":authError==="consent"?"Accept the privacy notice and terms in the registration form first.":"Google sign-in did not finish. Check the server configuration and try again.");
 $("out").onclick=function(){post("/api/auth/logout").then(function(){location.reload()})};
 $("cont").onclick=function(){location.href=DEST};
 fetch("/api/me").then(function(r){return r.json()}).then(function(d){
   if(!d.user)return;
   user=d.user;
-  if(d.user.role!==PORTAL){$("who").textContent="You are logged in as "+d.user.name+" ("+d.user.role+"). To use this login, log out first.";$("loginBox").hidden=true;$("already").hidden=false;$("cont").hidden=true;return}
+  
+  if(d.user.role!==PORTAL){$("who").textContent="You are logged in as "+d.user.name+" ("+d.user.role+"). To use this login, log out first.";show("already");$("cont").hidden=true;return}
   if(d.user.mustChange){toChange("");return}
-  $("loginBox").hidden=true;$("already").hidden=false;$("who").textContent=d.user.name;
+  show("already");$("who").textContent=d.user.name;
 }).catch(function(){});
 })();
 </script>
